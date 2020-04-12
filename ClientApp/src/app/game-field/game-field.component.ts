@@ -37,7 +37,7 @@ export class GameFieldComponent {
 
   @HostListener('document:mousemove', ['$event'])
   private onCardMove(event: MouseEvent) {
-    if (!this.clickedId) {
+    if (this.clickedId === undefined) {
       return;
     }
 
