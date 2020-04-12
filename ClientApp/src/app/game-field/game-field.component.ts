@@ -30,7 +30,6 @@ export class GameFieldComponent {
     }
   }
 
-  @HostListener('document:mouseleave', ['$event'])
   @HostListener('document:mouseup', ['$event'])
   private onCardMouseUp() {
     this.clickedId = undefined;
@@ -44,8 +43,8 @@ export class GameFieldComponent {
 
     let card = this.currentState.cards.find(e => e.id === this.clickedId);
     card = { ...card };
-    card.x = event.x;
-    card.y = event.y;
+    card.x += event.movementX;
+    card.y += event.movementY;
 
     this.sendUpdate(card);
   }

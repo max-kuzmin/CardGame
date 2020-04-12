@@ -101,6 +101,7 @@ namespace CardGame.Services
                 cards.Add(new Card
                 {
                     Id = i,
+                    IsThrown = true,
                 });
             }
 

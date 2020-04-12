@@ -3,10 +3,7 @@ import * as signalR from '@microsoft/signalr';
 import { GameFieldState } from 'src/models/GameFieldState';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { debounce } from 'rxjs/operators';
-import { interval } from 'rxjs/index';
 
-const debounceInterval = 250;
 const gameFieldController = 'gameField';
 const gameFieldHub = 'gameFieldHub';
 const hubMethod = 'ReceiveState';
@@ -39,14 +36,12 @@ export class GameFieldService {
 
     public sendUpdate(state: GameFieldState): void {
         this.http.post<GameFieldState>(this.baseUrl + gameFieldController, state)
-            .pipe(debounce(() => interval(debounceInterval)))
             .subscribe(() => console.log('Update send: ' + JSON.stringify(state)));
     }
 
     public getState(): Observable<GameFieldState> {
         console.log('Get state');
-        return this.http.get<GameFieldState>(this.baseUrl + gameFieldController)
-            .pipe(debounce(() => interval(debounceInterval)));
+        return this.http.get<GameFieldState>(this.baseUrl + gameFieldController);
     }
 
     private addListener() {
