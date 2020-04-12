@@ -5,5 +5,5 @@
   [style.left.px]="item.x"
   [class.opened]="item.isOpened"
   [class.closed]="!item.isOpened"
-  (mousedown)="onCardMouseDown($event, item)"></div>
+  (mousedown)="onCardMouseDown($event, item)">{{item.id}}</div>
 </ng-template>

@@ -43,8 +43,8 @@ export class GameFieldComponent {
 
     let card = this.currentState.cards.find(e => e.id === this.clickedId);
     card = { ...card };
-    card.x = event.x;
-    card.y = event.y;
+    card.x = event.x - 25;
+    card.y = event.y - 50;
 
     this.sendUpdate(card);
   }
