@@ -30,9 +30,9 @@ namespace CardGame.Controllers
         }
 
         [HttpGet("mix")]
-        public IActionResult MixThrownCards()
+        public IActionResult MixThrownCards(bool thrownOnly)
         {
-            _gameFieldService.MixThrownCards();
+            _gameFieldService.Mix(thrownOnly);
             return Ok();
         }
     }

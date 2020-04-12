@@ -12,6 +12,6 @@ namespace CardGame.Services
 
         void Update(GameFieldState state);
 
-        void MixThrownCards();
+        void Mix(bool thrownOnly);
     }
 }

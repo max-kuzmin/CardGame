@@ -43,8 +43,8 @@ export class GameFieldComponent {
 
     let card = this.currentState.cards.find(e => e.id === this.clickedId);
     card = { ...card };
-    card.x += event.movementX;
-    card.y += event.movementY;
+    card.x = event.x;
+    card.y = event.y;
 
     this.sendUpdate(card);
   }

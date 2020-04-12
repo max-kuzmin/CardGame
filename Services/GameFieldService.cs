@@ -28,7 +28,7 @@ namespace CardGame.Services
                 if (!_memoryCache.TryGetValue(Constants.GameFieldStateKey, out GameFieldState state))
                 {
                     Create();
-                    MixThrownCards();
+                    Mix(false);
                     state = _memoryCache.Get(Constants.GameFieldStateKey) as GameFieldState;
                 }
 
@@ -67,12 +67,12 @@ namespace CardGame.Services
             }
         }
 
-        public void MixThrownCards()
+        public void Mix(bool thrownOnly)
         {
             lock (Constants.GameFieldStateKey)
             {
                 var state = Get();
-                var cards = state.Cards.Where(e => e.IsThrown).ToList();
+                var cards = state.Cards.Where(e => !thrownOnly || e.IsThrown).ToList();
                 var numberOfCards = cards.Count;
 
                 for (int i = 0; i < numberOfCards; i++)
@@ -89,6 +89,7 @@ namespace CardGame.Services
                 }
 
                 _memoryCache.Set(Constants.GameFieldStateKey, state);
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ state });
             }
         }
 
