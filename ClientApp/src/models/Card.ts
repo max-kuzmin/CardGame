@@ -1,15 +1,15 @@
 export class Card {
-    public Id: number;
+    public id: number;
 
-    public X: number;
+    public x: number;
 
-    public Y: number;
+    public y: number;
 
-    public IsOpened: boolean;
+    public isOpened: boolean;
 
-    public OwnerId: number | undefined;
+    public ownerId: number | undefined;
 
-    public IsThrown: boolean;
+    public isThrown: boolean;
 
-    public Order: number;
+    public order: number;
 }

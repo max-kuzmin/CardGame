@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using CardGame.Models;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace CardGame.Services
 {
-    internal sealed class GameFieldService : IGameFieldService
+    internal sealed class GameFieldService: Hub, IGameFieldService
     {
         private readonly Random _random = new Random((int) DateTime.UtcNow.Ticks);
         private readonly IMemoryCache _memoryCache;
-        private readonly GameFieldHub _gameFieldHub;
+        private readonly IHubContext<GameFieldService> _hubContext;
 
         public GameFieldService(
             IMemoryCache memoryCache,
-            GameFieldHub gameFieldHub)
+            IHubContext<GameFieldService> hubContext)
         {
             _memoryCache = memoryCache;
-            _gameFieldHub = gameFieldHub;
+            _hubContext = hubContext;
         }
 
         public GameFieldState Get()
@@ -48,11 +49,11 @@ namespace CardGame.Services
 
             lock (Constants.GameFieldStateKey)
             {
-                var original = Get();
+                var updated = Get();
 
                 foreach (var card in updatedCards)
                 {
-                    var toUpdate = original.Cards.Single(e => e.Id == card.Id);
+                    var toUpdate = updated.Cards.Single(e => e.Id == card.Id);
                     toUpdate.IsOpened = card.IsOpened;
                     toUpdate.IsThrown = card.IsThrown;
                     toUpdate.Order = card.Order;
@@ -61,10 +62,9 @@ namespace CardGame.Services
                     toUpdate.Y = card.Y;
                 }
 
-                _memoryCache.Set(Constants.GameFieldStateKey, original);
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ updated });
             }
-
-            _ = _gameFieldHub.SendMessage(state);
         }
 
         public void MixThrownCards()
@@ -84,8 +84,8 @@ namespace CardGame.Services
                     card.IsThrown = false;
                     card.IsOpened = false;
                     card.OwnerId = null;
-                    card.X = 0;
-                    card.Y = 0;
+                    card.X = _random.Next(100, 500);
+                    card.Y = _random.Next(100, 500);
                 }
 
                 _memoryCache.Set(Constants.GameFieldStateKey, state);

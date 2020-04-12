@@ -1,8 +1,16 @@
-.card {
+.game-card {
     position: absolute;
-    width: 50;
-    height: 100;
-    border: 2px black;
-    top: 100px;
-    left: 100px;
+    width: 50px;
+    height: 100px;
+    border-width: 5px;
+    border-color: black;
+    border-style: solid;
+}
+
+.closed {
+    background-color: red;
+}
+
+.opened {
+    background-color: green;
 }

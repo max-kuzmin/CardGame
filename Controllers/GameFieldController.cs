@@ -16,9 +16,9 @@ namespace CardGame.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post([FromBody]GameFieldState message)
+        public IActionResult Post(GameFieldState state)
         {
-            _gameFieldService.Update(message);
+            _gameFieldService.Update(state);
             return Ok();
         }
 
@@ -27,6 +27,13 @@ namespace CardGame.Controllers
         {
             var result = _gameFieldService.Get();
             return Ok(result);
+        }
+
+        [HttpGet("mix")]
+        public IActionResult MixThrownCards()
+        {
+            _gameFieldService.MixThrownCards();
+            return Ok();
         }
     }
 }

@@ -25,7 +25,6 @@ namespace CardGame
             services.AddMemoryCache();
             services.AddSingleton<IGameFieldService, GameFieldService>();
             services.AddControllersWithViews();
-            services.AddSingleton<GameFieldHub>();
 
             services.AddSpaStaticFiles(configuration =>
             {
@@ -62,7 +61,7 @@ namespace CardGame
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<GameFieldHub>("/gameField");
+                endpoints.MapHub<GameFieldService>("/gameFieldHub");
             });
 
             app.UseSwagger();
