@@ -95,11 +95,11 @@ namespace CardGame.Services
 
         private void Create()
         {
-            var cards = new List<Card>();
+            var cards = new List<GameCard>();
 
             for (int i = 0; i < Constants.NumberOfCards; i++)
             {
-                cards.Add(new Card
+                cards.Add(new GameCard
                 {
                     Id = i,
                     IsThrown = true,

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CardGame.Models
 {
@@ -10,6 +6,6 @@ namespace CardGame.Models
     {
         [Required]
         [MinLength(1)]
-        public Card[] Cards { get; set; }
+        public GameCard[] Cards { get; set; }
     }
 }
