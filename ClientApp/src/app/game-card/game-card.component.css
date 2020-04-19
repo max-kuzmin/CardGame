@@ -1,0 +1,28 @@
+.game-card-container {
+    position: absolute;
+    width: 50px;
+    height: 100px;
+    border-width: 5px;
+    border-color: black;
+    border-style: solid;
+}
+
+.closed {
+    background-color: red;
+}
+
+.opened {
+    background-color: green;
+}
+
+.rotated90 {
+    transform: rotate(90deg);
+}
+
+.rotated180 {
+    transform: rotate(180deg);
+}
+
+.rotated270 {
+    transform: rotate(270deg);
+}

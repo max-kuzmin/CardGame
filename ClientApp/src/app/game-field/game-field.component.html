@@ -1,9 +1,5 @@
-<ng-template ngFor let-item [ngForOf]="currentState.cards" let-i="index">
-  <div
-  class="game-card"
-  [style.top.px]="item.y"
-  [style.left.px]="item.x"
-  [class.opened]="item.isOpened"
-  [class.closed]="!item.isOpened"
-  (mousedown)="onCardMouseDown($event, item)">{{item.id}}</div>
+<ng-template ngFor let-item [ngForOf]="gameCards" let-i="index" [ngForTrackBy]="trackCardsById">
+  <app-game-card
+    [model]="item"
+    (stateChanged)="sendUpdate($event)"></app-game-card>
 </ng-template>

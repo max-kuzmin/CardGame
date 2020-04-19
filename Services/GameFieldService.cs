@@ -60,6 +60,7 @@ namespace CardGame.Services
                     toUpdate.OwnerId = card.OwnerId;
                     toUpdate.X = card.X;
                     toUpdate.Y = card.Y;
+                    toUpdate.Rotation = card.Rotation;
                 }
 
                 _memoryCache.Set(Constants.GameFieldStateKey, updated);
@@ -86,6 +87,7 @@ namespace CardGame.Services
                     card.OwnerId = null;
                     card.X = _random.Next(100, 500);
                     card.Y = _random.Next(100, 500);
+                    card.Rotation = 0;
                 }
 
                 _memoryCache.Set(Constants.GameFieldStateKey, state);

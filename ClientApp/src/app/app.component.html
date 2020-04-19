@@ -1,5 +1,4 @@
-<body>
-  <app-nav-menu></app-nav-menu>
+<body (contextmenu)="disableContextMenu($event)">
   <div class="container">
     <router-outlet></router-outlet>
   </div>

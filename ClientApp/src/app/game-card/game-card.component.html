@@ -1,0 +1,10 @@
+<div
+  class="game-card-container"
+  [style.top.px]="model.y"
+  [style.left.px]="model.x"
+  [class.opened]="model.isOpened"
+  [class.closed]="!model.isOpened"
+  [class.rotated90]="isRotated90"
+  [class.rotated180]="isRotated180"
+  [class.rotated270]="isRotated270"
+  (mousedown)="onCardMouseDown($event)">{{model.id}}</div>
