@@ -7,7 +7,6 @@ namespace CardGame.Dto
         [Required]
         public int Id { get; set; }
 
-        [Required]
         public T Value { get; set; }
     }
 }

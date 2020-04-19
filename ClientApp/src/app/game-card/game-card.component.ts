@@ -3,7 +3,10 @@ import { GameCardDto } from 'src/models/GameCardDto';
 import { fromEvent } from 'rxjs';
 import { sampleTime } from 'rxjs/operators';
 import { GameFieldService } from 'src/services/GameFieldService';
-import { NumberOfCards, FrameDuration, WindowOffset } from 'src/models/Constants';
+import { NumberOfCards, FrameDuration, WindowOffset, CardWidth, CardHeight } from 'src/models/Constants';
+import { CardCoordinatesDto } from '../../models/CardCoordinatesDto';
+import { PersonalZoneParams } from 'src/models/PersonalZoneParams';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-game-card',
@@ -13,11 +16,15 @@ import { NumberOfCards, FrameDuration, WindowOffset } from 'src/models/Constants
 export class GameCardComponent {
   private isClicked = false;
   private clickOffset = { x: 0, y: 0 };
+  private userName: string;
 
   private readonly mouseMoveEvent = fromEvent<MouseEvent>(document, 'mousemove');
   private readonly mouseUpEvent = fromEvent<MouseEvent>(document, 'mouseup');
 
+  cardSize = { width: CardWidth, height: CardHeight };
+
   @Input() readonly model: GameCardDto;
+  @Input() readonly personalZoneParams: PersonalZoneParams;
 
   get isRotated90(): boolean {
     return this.model.rotation === 90;
@@ -29,6 +36,10 @@ export class GameCardComponent {
 
   get isRotated270(): boolean {
     return this.model.rotation === 270;
+  }
+
+  get isNotMyCard(): boolean {
+    return !!this.model.owner && this.model.owner !== this.userName;
   }
 
   onCardMouseDown(event: MouseEvent) {
@@ -56,7 +67,11 @@ export class GameCardComponent {
     }
   }
 
-  constructor(private gameFieldService: GameFieldService) {
+  constructor(
+    private gameFieldService: GameFieldService,
+    route: ActivatedRoute) {
+    route.queryParams.subscribe(params => this.userName = params['name']);
+
     this.mouseUpEvent.subscribe(() => this.onCardMouseUp());
 
     this.mouseMoveEvent
@@ -69,18 +84,45 @@ export class GameCardComponent {
   }
 
   private onCardMove(event: MouseEvent) {
-    if (!this.isClicked) {
+    if (!this.isClicked || !this.userName) {
       return;
     }
 
     if (event.x < WindowOffset || event.x > event.view.innerWidth - WindowOffset
       || event.y < WindowOffset || event.y > event.view.innerHeight - WindowOffset) {
-        return;
+      return;
+    }
+
+    const coords = <CardCoordinatesDto>{
+      id: this.model.id,
+      x: event.x - this.clickOffset.x,
+      y: event.y - this.clickOffset.y
+    };
+
+    this.gameFieldService.setCardCoordinates(coords);
+
+    this.checkCardInPersonalZone(coords);
+  }
+
+  private checkCardInPersonalZone(coords: CardCoordinatesDto): void {
+    const cardCenterX = coords.x + this.cardSize.width / 2;
+    const cardCenterY = coords.y + this.cardSize.height / 2;
+
+    const betweenX =
+      cardCenterX > this.personalZoneParams.x &&
+      cardCenterX < this.personalZoneParams.x + this.personalZoneParams.width;
+    const betweenY =
+      cardCenterY > this.personalZoneParams.y &&
+      cardCenterY < this.personalZoneParams.y + this.personalZoneParams.height;
+
+    if (betweenX && betweenY) {
+      if (this.model.owner !== this.userName) {
+        this.gameFieldService.setCardOwner(coords.id, this.userName);
       }
-
-      const x = event.x - this.clickOffset.x;
-      const y = event.y - this.clickOffset.y;
-
-    this.gameFieldService.setCardCoordinates(this.model.id, x, y);
+    } else {
+      if (this.model.owner) {
+        this.gameFieldService.setCardOwner(coords.id, undefined);
+      }
+    }
   }
 }

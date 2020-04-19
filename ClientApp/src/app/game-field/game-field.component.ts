@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { GameFieldService } from 'src/services/GameFieldService';
 import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { GameCardDto } from 'src/models/GameCardDto';
+import { PersonalZoneParams } from 'src/models/PersonalZoneParams';
 
 @Component({
   selector: 'app-game-field',
@@ -10,6 +11,8 @@ import { GameCardDto } from 'src/models/GameCardDto';
 })
 export class GameFieldComponent {
   private state: GameFieldStateDto = <GameFieldStateDto>{ cards: [] };
+
+  personalZoneParams: PersonalZoneParams = { x: 0, y: 500, width: 500, height: 200 };
 
   get gameCards(): GameCardDto[] {
     return this.state.cards;

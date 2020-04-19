@@ -8,4 +8,7 @@
   [class.rotated180]="isRotated180"
   [class.rotated270]="isRotated270"
   [style.z-index]="model.order"
+  [style.width.px]="cardSize.width"
+  [style.height.px]="cardSize.height"
+  [class.hidden]="isNotMyCard"
   (mousedown)="onCardMouseDown($event)">{{model.id}}</div>

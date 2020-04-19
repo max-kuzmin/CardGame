@@ -4,6 +4,7 @@ import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { CardCoordinatesDto } from 'src/models/CardCoordinatesDto';
 
 const controller = 'gameField';
 const hub = 'gameFieldHub';
@@ -61,13 +62,13 @@ export class GameFieldService {
             .subscribe(() => console.log('Set card rotation id ' + id));
     }
 
-    public setCardCoordinates(id: number, x: number, y: number): Subscription {
+    public setCardCoordinates(coords: CardCoordinatesDto): Subscription {
         return this.http
-            .post(this.baseUrl + controller + setCardCoordinatesMethod, { id: id, x: x, y: y })
-            .subscribe(() => console.log('Set card coordinates id ' + id));
+            .post(this.baseUrl + controller + setCardCoordinatesMethod, coords)
+            .subscribe(() => console.log('Set card coordinates id ' + coords.id));
     }
 
-    public setCardOwner(id: number, value: string): Subscription {
+    public setCardOwner(id: number, value: string | undefined): Subscription {
         return this.http
             .post(this.baseUrl + controller + setCardOwnerMethod, { id: id, value: value })
             .subscribe(() => console.log('Set card owner id ' + id));
