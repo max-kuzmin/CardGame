@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { fromEvent } from 'rxjs';
 import { sampleTime } from 'rxjs/operators';
@@ -18,7 +18,6 @@ export class GameCardComponent {
   private readonly mouseUpEvent = fromEvent<MouseEvent>(document, 'mouseup');
 
   @Input() readonly model: GameCardDto;
-  @Output() readonly stateChanged: EventEmitter<GameCardDto> = new EventEmitter();
 
   get isRotated90(): boolean {
     return this.model.rotation === 90;
@@ -41,24 +40,13 @@ export class GameCardComponent {
       }
 
       case 1: {
-        const updatedCard = {
-          ...this.model,
-          rotation: (this.model.rotation + 90) % 360
-        };
-        this.stateChanged.emit(updatedCard);
+        const rotation = (this.model.rotation + 90) % 360;
+        this.gameFieldService.setCardRotation(this.model.id, rotation);
         break;
       }
 
       case 2: {
-        const updatedCard = {
-          ...this.model,
-          isOpened: !this.model.isOpened
-        };
-        this.stateChanged.emit(updatedCard);
-        break;
-      }
-
-      default: {
+        this.gameFieldService.setCardIsOpened(this.model.id, !this.model.isOpened);
         break;
       }
     }
@@ -90,12 +78,9 @@ export class GameCardComponent {
         return;
       }
 
-    const updatedCard = {
-      ...this.model,
-      x: event.x - this.clickOffset.x,
-      y: event.y - this.clickOffset.y,
-    };
+      const x = event.x - this.clickOffset.x;
+      const y = event.y - this.clickOffset.y;
 
-    this.stateChanged.emit(updatedCard);
+    this.gameFieldService.setCardCoordinates(this.model.id, x, y);
   }
 }

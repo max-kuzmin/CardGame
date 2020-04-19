@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CardGame.Dto;
 using CardGame.Models;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Caching.Memory;
@@ -21,13 +22,13 @@ namespace CardGame.Services
             _hubContext = hubContext;
         }
 
-        public GameFieldState Get()
+        public GameFieldState GetState()
         {
             lock (Constants.GameFieldStateKey)
             {
                 if (!_memoryCache.TryGetValue(Constants.GameFieldStateKey, out GameFieldState state))
                 {
-                    Create();
+                    CreateState();
                     MixCards(false);
                     state = _memoryCache.Get(Constants.GameFieldStateKey) as GameFieldState;
                 }
@@ -36,43 +37,11 @@ namespace CardGame.Services
             }
         }
 
-        public void Update(GameFieldState state)
-        {
-            var updatedCards = state?.Cards?
-                .Where(e => e.Id >= 0 && e.Id <= Constants.NumberOfCards)
-                .ToArray();
-
-            if (updatedCards?.Any() != true)
-            {
-                return;
-            }
-
-            lock (Constants.GameFieldStateKey)
-            {
-                var updated = Get();
-
-                foreach (var card in updatedCards)
-                {
-                    var toUpdate = updated.Cards.Single(e => e.Id == card.Id);
-                    toUpdate.IsOpened = card.IsOpened;
-                    toUpdate.IsThrown = card.IsThrown;
-                    toUpdate.Order = card.Order;
-                    toUpdate.OwnerId = card.OwnerId;
-                    toUpdate.X = card.X;
-                    toUpdate.Y = card.Y;
-                    toUpdate.Rotation = card.Rotation;
-                }
-
-                _memoryCache.Set(Constants.GameFieldStateKey, updated);
-                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ updated });
-            }
-        }
-
         public void MixCards(bool thrownOnly)
         {
             lock (Constants.GameFieldStateKey)
             {
-                var state = Get();
+                var state = GetState();
                 var cards = state.Cards.Where(e => !thrownOnly || e.IsThrown).ToList();
                 var numberOfCards = cards.Count;
 
@@ -84,14 +53,13 @@ namespace CardGame.Services
                     card.Order = i + 1;
                     card.IsThrown = false;
                     card.IsOpened = false;
-                    card.OwnerId = null;
+                    card.Owner = null;
                     card.X = Constants.InitCardsX;
                     card.Y = Constants.InitCardsY;
                     card.Rotation = 0;
                 }
 
-                _memoryCache.Set(Constants.GameFieldStateKey, state);
-                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ state });
+                UpdateStateAndSend(state);
             }
         }
 
@@ -99,7 +67,7 @@ namespace CardGame.Services
         {
             lock (Constants.GameFieldStateKey)
             {
-                var updated = Get();
+                var updated = GetState();
                 var topCard = updated.Cards.SingleOrDefault(e => e.Id == id);
 
                 if (topCard == null)
@@ -115,12 +83,64 @@ namespace CardGame.Services
 
                 topCard.Order = Constants.NumberOfCards;
 
-                _memoryCache.Set(Constants.GameFieldStateKey, updated);
-                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ updated });
+                UpdateStateAndSend(updated);
             }
         }
 
-        private void Create()
+        public void SetCardRotation(CardParamDto<int> model)
+        {
+            UpdateCardProperties(model.Id, card => card.Rotation = model.Value % 360);
+        }
+
+        public void SetCardCoordinates(CardCoordinatesDto model)
+        {
+            UpdateCardProperties(model.Id, card =>
+            {
+                card.X = model.X;
+                card.Y = model.Y;
+            });
+        }
+
+        public void SetCardOwner(CardParamDto<string> model)
+        {
+            UpdateCardProperties(model.Id, card => card.Owner = model.Value);
+        }
+
+        public void SetCardIsOpened(CardParamDto<bool> model)
+        {
+            UpdateCardProperties(model.Id, card => card.IsOpened = model.Value);
+        }
+
+        public void SetCardIsThrown(CardParamDto<bool> model)
+        {
+            UpdateCardProperties(model.Id, card => card.IsThrown = model.Value);
+        }
+
+        private void UpdateCardProperties(int id, Action<GameCard> action)
+        {
+            lock (Constants.GameFieldStateKey)
+            {
+                var updated = GetState();
+                var card = updated.Cards.SingleOrDefault(e => e.Id == id);
+
+                if (card == null)
+                {
+                    return;
+                }
+
+                action(card);
+
+                UpdateStateAndSend(updated);
+            }
+        }
+
+        private void UpdateStateAndSend(GameFieldState updated)
+        {
+            _memoryCache.Set(Constants.GameFieldStateKey, updated);
+            _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[] {updated});
+        }
+
+        private void CreateState()
         {
             var cards = new List<GameCard>();
 

@@ -15,15 +15,10 @@ export class GameFieldComponent {
     return this.state.cards;
   }
 
-  constructor(private gameFieldService: GameFieldService) {
+  constructor(gameFieldService: GameFieldService) {
     gameFieldService.startConnection();
     gameFieldService.stateUpdated.subscribe(newState => this.state = newState);
     gameFieldService.getState().subscribe(newState => this.state = newState);
-  }
-
-  sendUpdate(updatedCard: GameCardDto) {
-    const updates = <GameFieldStateDto> { cards: [ updatedCard ] };
-    this.gameFieldService.sendUpdate(updates);
   }
 
   trackCardsById(index: number, item: GameCardDto): number | undefined {

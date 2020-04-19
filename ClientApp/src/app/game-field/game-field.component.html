@@ -1,5 +1,3 @@
 <ng-template ngFor let-item [ngForOf]="gameCards" let-i="index" [ngForTrackBy]="trackCardsById">
-  <app-game-card
-    [model]="item"
-    (stateChanged)="sendUpdate($event)"></app-game-card>
+  <app-game-card [model]="item"></app-game-card>
 </ng-template>

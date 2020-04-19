@@ -9,7 +9,7 @@ export class GameCardDto {
 
     public readonly isOpened: boolean;
 
-    public readonly ownerId: number | undefined;
+    public readonly owner: string | undefined;
 
     public readonly isThrown: boolean;
 
