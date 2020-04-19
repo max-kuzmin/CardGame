@@ -8,6 +8,8 @@ namespace CardGame.Services
 
         void Update(GameFieldState state);
 
-        void Mix(bool thrownOnly);
+        void MixCards(bool thrownOnly);
+
+        void PopCard(int id);
     }
 }

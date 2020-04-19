@@ -1,4 +1,5 @@
-﻿using CardGame.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using CardGame.Models;
 using CardGame.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ namespace CardGame.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(GameFieldState state)
+        public IActionResult Post([Required]GameFieldState state)
         {
             _gameFieldService.Update(state);
             return Ok();
@@ -29,10 +30,17 @@ namespace CardGame.Controllers
             return Ok(result);
         }
 
-        [HttpGet("mix")]
-        public IActionResult MixThrownCards(bool thrownOnly)
+        [HttpGet(nameof(MixCards))]
+        public IActionResult MixCards(bool thrownOnly)
         {
-            _gameFieldService.Mix(thrownOnly);
+            _gameFieldService.MixCards(thrownOnly);
+            return Ok();
+        }
+
+        [HttpPost(nameof(PopCard))]
+        public IActionResult PopCard([Required][FromBody]int id)
+        {
+            _gameFieldService.PopCard(id);
             return Ok();
         }
     }

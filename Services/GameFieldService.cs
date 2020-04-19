@@ -28,7 +28,7 @@ namespace CardGame.Services
                 if (!_memoryCache.TryGetValue(Constants.GameFieldStateKey, out GameFieldState state))
                 {
                     Create();
-                    Mix(false);
+                    MixCards(false);
                     state = _memoryCache.Get(Constants.GameFieldStateKey) as GameFieldState;
                 }
 
@@ -68,7 +68,7 @@ namespace CardGame.Services
             }
         }
 
-        public void Mix(bool thrownOnly)
+        public void MixCards(bool thrownOnly)
         {
             lock (Constants.GameFieldStateKey)
             {
@@ -81,17 +81,42 @@ namespace CardGame.Services
                     var card = cards[_random.Next(cards.Count - 1)];
                     cards.Remove(card);
 
-                    card.Order = i;
+                    card.Order = i + 1;
                     card.IsThrown = false;
                     card.IsOpened = false;
                     card.OwnerId = null;
-                    card.X = _random.Next(100, 500);
-                    card.Y = _random.Next(100, 500);
+                    card.X = Constants.InitCardsX;
+                    card.Y = Constants.InitCardsY;
                     card.Rotation = 0;
                 }
 
                 _memoryCache.Set(Constants.GameFieldStateKey, state);
                 _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ state });
+            }
+        }
+
+        public void PopCard(int id)
+        {
+            lock (Constants.GameFieldStateKey)
+            {
+                var updated = Get();
+                var topCard = updated.Cards.SingleOrDefault(e => e.Id == id);
+
+                if (topCard == null)
+                {
+                    return;
+                }
+
+                var cardsBefore = updated.Cards.Where(e => e.Order > topCard.Order);
+                foreach (var card in cardsBefore)
+                {
+                    card.Order--;
+                }
+
+                topCard.Order = Constants.NumberOfCards;
+
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[]{ updated });
             }
         }
 

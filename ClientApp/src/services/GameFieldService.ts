@@ -2,12 +2,13 @@ import { Injectable, Inject, EventEmitter, Output } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { HttpClient } from '@angular/common/http';
-import { Observable, } from 'rxjs';
+import { Observable, Subscription, } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 const gameFieldController = 'gameField';
 const gameFieldHub = 'gameFieldHub';
 const hubMethod = 'ReceiveState';
+const popCard = '/popCard';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +23,7 @@ export class GameFieldService {
 
     @Output() public stateUpdated: EventEmitter<GameFieldStateDto> = new EventEmitter();
 
-    public startConnection() {
+    public startConnection(): void {
         this.hubConnection = new signalR.HubConnectionBuilder()
             .withUrl(this.baseUrl + gameFieldHub)
             .build();
@@ -35,8 +36,8 @@ export class GameFieldService {
             .catch(err => console.error('Error while starting connection: ' + err));
     }
 
-    public sendUpdate(state: GameFieldStateDto): void {
-        this.http
+    public sendUpdate(state: GameFieldStateDto): Subscription {
+        return this.http
             .post(this.baseUrl + gameFieldController, state)
             .subscribe(() => console.log('Send update for card ids: ' + state.cards.map(e => e.id).join(',')));
     }
@@ -48,10 +49,16 @@ export class GameFieldService {
                 tap(() => console.log('Get initial state')));
     }
 
+    public popCard(id: number): Subscription {
+        return this.http
+            .post(this.baseUrl + gameFieldController + popCard, id)
+            .subscribe(() => console.log('Pop card id ' + id));
+    }
+
     private addListener() {
         this.hubConnection.on(hubMethod, (data) => {
             console.log('State received');
-                this.stateUpdated.emit(data);
+            this.stateUpdated.emit(data);
         });
         console.log('Listening...');
     }

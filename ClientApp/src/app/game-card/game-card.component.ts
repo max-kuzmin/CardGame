@@ -2,8 +2,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { fromEvent } from 'rxjs';
 import { sampleTime } from 'rxjs/operators';
-
-const frameDuration = 1000 / 60;
+import { GameFieldService } from 'src/services/GameFieldService';
+import { NumberOfCards, FrameDuration, WindowOffset } from 'src/models/Constants';
 
 @Component({
   selector: 'app-game-card',
@@ -62,13 +62,17 @@ export class GameCardComponent {
         break;
       }
     }
+
+    if (this.model.order !== NumberOfCards) {
+      this.gameFieldService.popCard(this.model.id);
+    }
   }
 
-  constructor() {
+  constructor(private gameFieldService: GameFieldService) {
     this.mouseUpEvent.subscribe(() => this.onCardMouseUp());
 
     this.mouseMoveEvent
-      .pipe(sampleTime(frameDuration))
+      .pipe(sampleTime(FrameDuration))
       .subscribe(event => this.onCardMove(event));
   }
 
@@ -80,6 +84,11 @@ export class GameCardComponent {
     if (!this.isClicked) {
       return;
     }
+
+    if (event.x < WindowOffset || event.x > event.view.innerWidth - WindowOffset
+      || event.y < WindowOffset || event.y > event.view.innerHeight - WindowOffset) {
+        return;
+      }
 
     const updatedCard = {
       ...this.model,
