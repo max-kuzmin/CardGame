@@ -1,8 +1,7 @@
 .game-card-container {
     position: absolute;
-    border-width: 5px;
-    border-color: black;
-    border-style: solid;
+    border: 2px black solid;
+    border-radius: 0.25rem;
 }
 
 .closed {

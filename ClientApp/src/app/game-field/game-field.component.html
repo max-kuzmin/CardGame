@@ -1,7 +1,10 @@
 <ng-template ngFor let-item [ngForOf]="gameCards" let-i="index" [ngForTrackBy]="trackCardsById">
   <app-game-card
     [model]="item"
-    [personalZoneParams]="personalZoneParams"></app-game-card>
+    [personalZoneParams]="personalZoneParams"
+    [throwZoneParams]="throwZoneParams"></app-game-card>
 </ng-template>
 
 <app-personal-zone (paramsChanged)="updatePersonalZoneParams($event)"></app-personal-zone>
+
+<app-throw-zone (paramsChanged)="updateThrowZoneParams($event)"></app-throw-zone>

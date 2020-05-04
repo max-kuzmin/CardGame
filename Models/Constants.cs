@@ -5,7 +5,7 @@
         public const string GameFieldStateKey = "GameFieldState";
         public const int NumberOfCards = 30;
         public const string SendStateHubMethod = "ReceiveState";
-        public const int InitCardsX = 100;
-        public const int InitCardsY = 100;
+        public const int InitCardsX = 180;
+        public const int InitCardsY = 35;
     }
 }

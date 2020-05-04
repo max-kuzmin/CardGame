@@ -7,7 +7,7 @@ import { NumberOfCards, FrameDuration, CardWidth, CardHeight } from 'src/models/
 import { CardCoordinatesDto } from '../../models/CardCoordinatesDto';
 import { ZoneParams } from 'src/models/ZoneParams';
 import { ActivatedRoute } from '@angular/router';
-import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../helpers/MouseEventsHelpers';
+import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords, isCardInside } from '../../helpers/MouseEventsHelpers';
 import { Coords } from 'src/models/Coords';
 import { MouseButtons } from 'src/models/MouseButtons';
 
@@ -28,6 +28,7 @@ export class GameCardComponent {
 
   @Input() readonly model: GameCardDto;
   @Input() readonly personalZoneParams: ZoneParams;
+  @Input() readonly throwZoneParams: ZoneParams;
 
   get isRotated90(): boolean {
     return this.model.rotation === 90;
@@ -103,20 +104,11 @@ export class GameCardComponent {
     this.gameFieldService.setCardCoordinates(coords);
 
     this.checkCardInPersonalZone(coords);
+    this.checkCardInThrowZone(coords);
   }
 
   private checkCardInPersonalZone(coords: CardCoordinatesDto): void {
-    const cardCenterX = coords.x + this.cardSize.width / 2;
-    const cardCenterY = coords.y + this.cardSize.height / 2;
-
-    const betweenX =
-      cardCenterX > this.personalZoneParams.x &&
-      cardCenterX < this.personalZoneParams.x + this.personalZoneParams.width;
-    const betweenY =
-      cardCenterY > this.personalZoneParams.y &&
-      cardCenterY < this.personalZoneParams.y + this.personalZoneParams.height;
-
-    if (betweenX && betweenY) {
+    if (isCardInside(coords, this.cardSize, this.personalZoneParams)) {
       if (this.model.owner !== this.userName) {
         this.gameFieldService.setCardOwner(coords.id, this.userName);
       }
@@ -124,6 +116,13 @@ export class GameCardComponent {
       if (this.model.owner) {
         this.gameFieldService.setCardOwner(coords.id, undefined);
       }
+    }
+  }
+
+  private checkCardInThrowZone(coords: CardCoordinatesDto): void {
+    const isThrownNew = isCardInside(coords, this.cardSize, this.throwZoneParams);
+    if (isThrownNew !== this.model.isThrown) {
+      this.gameFieldService.setCardIsThrown(coords.id, isThrownNew);
     }
   }
 }

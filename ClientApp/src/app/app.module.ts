@@ -8,13 +8,15 @@ import { GameFieldComponent } from './game-field/game-field.component';
 import { GameCardComponent } from './game-card/game-card.component';
 import { PersonalZoneComponent } from './personal-zone/personal-zone.component';
 import { AngularResizedEventModule } from 'angular-resize-event';
+import { ThrowZoneComponent } from './throw-zone/throw-zone.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameFieldComponent,
     GameCardComponent,
-    PersonalZoneComponent
+    PersonalZoneComponent,
+    ThrowZoneComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

@@ -8,9 +8,9 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace CardGame.Services
 {
-    internal sealed class GameFieldService: Hub, IGameFieldService
+    internal sealed class GameFieldService : Hub, IGameFieldService
     {
-        private readonly Random _random = new Random((int) DateTime.UtcNow.Ticks);
+        private readonly Random _random = new Random((int)DateTime.UtcNow.Ticks);
         private readonly IMemoryCache _memoryCache;
         private readonly IHubContext<GameFieldService> _hubContext;
 
@@ -37,25 +37,38 @@ namespace CardGame.Services
             }
         }
 
-        public void MixCards(bool thrownOnly)
+        public void MixCards(bool thrownOnly, int? initX = null, int? initY = null)
         {
             lock (Constants.GameFieldStateKey)
             {
                 var state = GetState();
-                var cards = state.Cards.Where(e => !thrownOnly || e.IsThrown).ToList();
-                var numberOfCards = cards.Count;
+                var cardsToMix = state.Cards
+                    .Where(e => !thrownOnly || e.IsThrown)
+                    .ToList();
+                var mixCount = cardsToMix.Count;
 
-                for (int i = 0; i < numberOfCards; i++)
+                // Pop other cards
+                var otherCards = state.Cards
+                    .Except(cardsToMix)
+                    .OrderBy(e => e.Order)
+                    .ToArray();
+                for (int i = 0; i < otherCards.Length; i++)
                 {
-                    var card = cards[_random.Next(cards.Count - 1)];
-                    cards.Remove(card);
+                    otherCards[i].Order = mixCount + i + 1;
+                }
+
+                // Mix selected cards
+                for (int i = 0; i < mixCount; i++)
+                {
+                    var card = cardsToMix[_random.Next(cardsToMix.Count - 1)];
+                    cardsToMix.Remove(card);
 
                     card.Order = i + 1;
                     card.IsThrown = false;
                     card.IsOpened = false;
                     card.Owner = null;
-                    card.X = Constants.InitCardsX;
-                    card.Y = Constants.InitCardsY;
+                    card.X = initX ?? Constants.InitCardsX;
+                    card.Y = initY ?? Constants.InitCardsY;
                     card.Rotation = 0;
                 }
 
@@ -137,7 +150,7 @@ namespace CardGame.Services
         private void UpdateStateAndSend(GameFieldState updated)
         {
             _memoryCache.Set(Constants.GameFieldStateKey, updated);
-            _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[] {updated});
+            _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[] { updated });
         }
 
         private void CreateState()

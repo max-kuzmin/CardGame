@@ -24,9 +24,9 @@ namespace CardGame.Controllers
         }
 
         [HttpGet(nameof(MixCards))]
-        public IActionResult MixCards(bool thrownOnly)
+        public IActionResult MixCards(bool thrownOnly, int? initX, int? initY)
         {
-            _gameFieldService.MixCards(thrownOnly);
+            _gameFieldService.MixCards(thrownOnly, initX, initY);
             return Ok();
         }
 

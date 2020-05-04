@@ -32,4 +32,8 @@ export class GameFieldComponent {
   updatePersonalZoneParams(event: ZoneParams): void {
     this.personalZoneParams = event;
   }
+
+  updateThrowZoneParams(event: ZoneParams): void {
+    this.throwZoneParams = event;
+  }
 }

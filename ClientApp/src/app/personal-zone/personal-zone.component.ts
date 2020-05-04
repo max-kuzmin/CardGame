@@ -3,7 +3,7 @@ import { ZoneParams } from 'src/models/ZoneParams';
 import { InitPersonalZoneParams, MinResizeDelta } from 'src/models/Constants';
 import { ResizedEvent } from 'angular-resize-event';
 import { fromEvent } from 'rxjs';
-import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../helpers/MouseEventsHelpers';
+import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../../helpers/MouseEventsHelpers';
 import { Coords } from 'src/models/Coords';
 import { MouseButtons } from 'src/models/MouseButtons';
 

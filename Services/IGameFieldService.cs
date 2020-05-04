@@ -7,7 +7,7 @@ namespace CardGame.Services
     {
         GameFieldState GetState();
 
-        void MixCards(bool thrownOnly);
+        void MixCards(bool thrownOnly, int? initX = null, int? initY = null);
 
         void PopCard(int id);
 
