@@ -1,15 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Inject } from '@angular/core';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { fromEvent } from 'rxjs';
 import { sampleTime } from 'rxjs/operators';
 import { GameFieldService } from 'src/services/GameFieldService';
-import { NumberOfCards, FrameDuration, CardWidth, CardHeight } from 'src/models/Constants';
+import { NumberOfCards, FrameDuration, CardWidth, CardHeight, UserNameKey } from 'src/models/Constants';
 import { CardCoordinatesDto } from '../../models/CardCoordinatesDto';
 import { ZoneParams } from 'src/models/ZoneParams';
-import { ActivatedRoute } from '@angular/router';
 import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords, isCardInside } from '../../helpers/MouseEventsHelpers';
 import { Coords } from 'src/models/Coords';
 import { MouseButtons } from 'src/models/MouseButtons';
+import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
 
 @Component({
   selector: 'app-game-card',
@@ -19,7 +19,9 @@ import { MouseButtons } from 'src/models/MouseButtons';
 export class GameCardComponent {
   private isClicked = false;
   private clickOffset = new Coords();
-  private userName: string;
+  private get userName(): string | undefined {
+    return this.storage.has(UserNameKey) ? this.storage.get(UserNameKey) : undefined;
+  }
 
   private readonly mouseMoveEvent = fromEvent<MouseEvent>(document, 'mousemove');
   private readonly mouseUpEvent = fromEvent<MouseEvent>(document, 'mouseup');
@@ -73,8 +75,7 @@ export class GameCardComponent {
 
   constructor(
     private gameFieldService: GameFieldService,
-    route: ActivatedRoute) {
-    route.queryParams.subscribe(params => this.userName = params['name']);
+    @Inject(SESSION_STORAGE) private storage: StorageService) {
 
     this.mouseUpEvent.subscribe(() => this.onCardMouseUp());
 
