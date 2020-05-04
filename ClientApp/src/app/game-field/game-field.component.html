@@ -4,9 +4,4 @@
     [personalZoneParams]="personalZoneParams"></app-game-card>
 </ng-template>
 
-<div 
-  class="personal-zone"
-  [style.top.px]="personalZoneParams.y"
-  [style.left.px]="personalZoneParams.x"
-  [style.width.px]="personalZoneParams.width"
-  [style.height.px]="personalZoneParams.height"></div>
+<app-personal-zone (paramsChanged)="updatePersonalZoneParams($event)"></app-personal-zone>

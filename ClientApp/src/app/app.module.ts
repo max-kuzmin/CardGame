@@ -6,17 +6,21 @@ import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { GameFieldComponent } from './game-field/game-field.component';
 import { GameCardComponent } from './game-card/game-card.component';
+import { PersonalZoneComponent } from './personal-zone/personal-zone.component';
+import { AngularResizedEventModule } from 'angular-resize-event';
 
 @NgModule({
   declarations: [
     AppComponent,
     GameFieldComponent,
-    GameCardComponent
+    GameCardComponent,
+    PersonalZoneComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    AngularResizedEventModule,
     RouterModule.forRoot([
       { path: '', component: GameFieldComponent, pathMatch: 'full' },
     ])

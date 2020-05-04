@@ -3,10 +3,13 @@ import { GameCardDto } from 'src/models/GameCardDto';
 import { fromEvent } from 'rxjs';
 import { sampleTime } from 'rxjs/operators';
 import { GameFieldService } from 'src/services/GameFieldService';
-import { NumberOfCards, FrameDuration, WindowOffset, CardWidth, CardHeight } from 'src/models/Constants';
+import { NumberOfCards, FrameDuration, CardWidth, CardHeight } from 'src/models/Constants';
 import { CardCoordinatesDto } from '../../models/CardCoordinatesDto';
-import { PersonalZoneParams } from 'src/models/PersonalZoneParams';
+import { ZoneParams } from 'src/models/ZoneParams';
 import { ActivatedRoute } from '@angular/router';
+import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../helpers/MouseEventsHelpers';
+import { Coords } from 'src/models/Coords';
+import { MouseButtons } from 'src/models/MouseButtons';
 
 @Component({
   selector: 'app-game-card',
@@ -15,7 +18,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class GameCardComponent {
   private isClicked = false;
-  private clickOffset = { x: 0, y: 0 };
+  private clickOffset = new Coords();
   private userName: string;
 
   private readonly mouseMoveEvent = fromEvent<MouseEvent>(document, 'mousemove');
@@ -24,7 +27,7 @@ export class GameCardComponent {
   cardSize = { width: CardWidth, height: CardHeight };
 
   @Input() readonly model: GameCardDto;
-  @Input() readonly personalZoneParams: PersonalZoneParams;
+  @Input() readonly personalZoneParams: ZoneParams;
 
   get isRotated90(): boolean {
     return this.model.rotation === 90;
@@ -44,19 +47,19 @@ export class GameCardComponent {
 
   onCardMouseDown(event: MouseEvent) {
     switch (event.button) {
-      case 0: {
+      case MouseButtons.left: {
         this.isClicked = true;
-        this.clickOffset = { x: event.x - this.model.x, y: event.y - this.model.y };
+        this.clickOffset = CalculateClickOffset(event, this.model);
         break;
       }
 
-      case 1: {
+      case MouseButtons.middle: {
         const rotation = (this.model.rotation + 90) % 360;
         this.gameFieldService.setCardRotation(this.model.id, rotation);
         break;
       }
 
-      case 2: {
+      case MouseButtons.right: {
         this.gameFieldService.setCardIsOpened(this.model.id, !this.model.isOpened);
         break;
       }
@@ -88,15 +91,13 @@ export class GameCardComponent {
       return;
     }
 
-    if (event.x < WindowOffset || event.x > event.view.innerWidth - WindowOffset
-      || event.y < WindowOffset || event.y > event.view.innerHeight - WindowOffset) {
+    if (IsOutOfWindowBounds(event)) {
       return;
     }
 
     const coords = <CardCoordinatesDto>{
       id: this.model.id,
-      x: event.x - this.clickOffset.x,
-      y: event.y - this.clickOffset.y
+      ...CalculateCoords(event, this.clickOffset)
     };
 
     this.gameFieldService.setCardCoordinates(coords);

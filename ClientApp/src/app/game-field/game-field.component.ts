@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { GameFieldService } from 'src/services/GameFieldService';
 import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { GameCardDto } from 'src/models/GameCardDto';
-import { PersonalZoneParams } from 'src/models/PersonalZoneParams';
+import { ZoneParams } from 'src/models/ZoneParams';
 
 @Component({
   selector: 'app-game-field',
@@ -12,7 +12,8 @@ import { PersonalZoneParams } from 'src/models/PersonalZoneParams';
 export class GameFieldComponent {
   private state: GameFieldStateDto = <GameFieldStateDto>{ cards: [] };
 
-  personalZoneParams: PersonalZoneParams = { x: 0, y: 500, width: 500, height: 200 };
+  personalZoneParams: ZoneParams;
+  throwZoneParams: ZoneParams;
 
   get gameCards(): GameCardDto[] {
     return this.state.cards;
@@ -26,5 +27,9 @@ export class GameFieldComponent {
 
   trackCardsById(index: number, item: GameCardDto): number | undefined {
     return item ? item.id : undefined;
+  }
+
+  updatePersonalZoneParams(event: ZoneParams): void {
+    this.personalZoneParams = event;
   }
 }

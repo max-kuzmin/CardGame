@@ -1,0 +1,48 @@
+.personal-zone {
+    position: absolute;
+    border: 2px black solid;
+    border-radius: 1.5rem;
+    background-color: #e8fbe8;
+    resize: both;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-width: 15rem;
+    min-height: 10rem;
+}
+
+.personal-zone::-webkit-resizer {
+    background-color: transparent;
+}
+
+.dragger {
+    font-size: xx-large;
+    width: 2rem;
+    height: 2rem;
+    margin-left: 0.5rem;
+    align-self: start;
+    padding: 0;
+    line-height: 2rem;
+    cursor: move;
+}
+
+.text {
+    color: white;
+    text-align: center;
+    font-size: 5rem;
+    align-self: center;
+    padding: 0;
+    margin: auto;
+    line-height: 5rem;
+}
+
+.resizer {
+    font-size: xx-large;
+    width: 2rem;
+    height: 2rem;
+    margin-bottom: 0.3rem;
+    align-self: end;
+    margin-left: auto;
+    padding: 0;
+    line-height: 2rem;
+}

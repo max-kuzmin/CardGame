@@ -1,4 +1,7 @@
-export class PersonalZoneParams {
+import { Coords } from './Coords';
+import { Size } from './Size';
+
+export class ZoneParams implements Coords, Size {
     public readonly x: number;
 
     public readonly y: number;

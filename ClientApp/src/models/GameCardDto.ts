@@ -1,4 +1,6 @@
-export class GameCardDto {
+import { Coords } from './Coords';
+
+export class GameCardDto implements Coords {
     public readonly id: number;
 
     public readonly x: number;
