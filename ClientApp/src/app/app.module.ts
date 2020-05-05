@@ -10,6 +10,7 @@ import { PersonalZoneComponent } from './personal-zone/personal-zone.component';
 import { AngularResizedEventModule } from 'angular-resize-event';
 import { ThrowZoneComponent } from './throw-zone/throw-zone.component';
 import { UserNameFormComponent } from './username-form/username-form.component';
+import { InfoZoneComponent } from './info-zone/info-zone.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { UserNameFormComponent } from './username-form/username-form.component';
     GameCardComponent,
     PersonalZoneComponent,
     ThrowZoneComponent,
-    UserNameFormComponent
+    UserNameFormComponent,
+    InfoZoneComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

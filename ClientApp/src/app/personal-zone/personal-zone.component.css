@@ -7,8 +7,8 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    min-width: 15rem;
-    min-height: 10rem;
+    min-width: 250px;
+    min-height: 150px;
 }
 
 .personal-zone::-webkit-resizer {
@@ -16,6 +16,7 @@
 }
 
 .dragger {
+    color: white;
     font-size: xx-large;
     width: 2rem;
     height: 2rem;
@@ -37,6 +38,7 @@
 }
 
 .resizer {
+    color: white;
     font-size: xx-large;
     width: 2rem;
     height: 2rem;

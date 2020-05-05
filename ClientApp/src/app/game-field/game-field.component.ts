@@ -10,7 +10,7 @@ import { ZoneParams } from 'src/models/ZoneParams';
   styleUrls: ['./game-field.component.css']
 })
 export class GameFieldComponent {
-  private state: GameFieldStateDto = <GameFieldStateDto>{ cards: [] };
+  state: GameFieldStateDto = <GameFieldStateDto>{ cards: [] };
 
   personalZoneParams: ZoneParams;
   throwZoneParams: ZoneParams;

@@ -1,7 +1,8 @@
 <div *ngIf="!isUserNameDefined" class="username-background">
   <div class="username-form">
+    <div class="title">МОНСТРИКИ</div>
     <label class="username-label" for="userName">Введите имя:</label>
-    <input type="text" [(ngModel)]="userName" name="userName" />
+    <input class="username-input" type="text" [(ngModel)]="userName" name="userName" />
     <button class="username-button" (click)="onSaveUserName()">ОК</button>
   </div>
 </div>
