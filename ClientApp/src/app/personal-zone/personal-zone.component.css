@@ -8,7 +8,7 @@
     display: flex;
     flex-direction: column;
     min-width: 250px;
-    min-height: 150px;
+    min-height: 125px;
 }
 
 .personal-zone::-webkit-resizer {
@@ -30,11 +30,11 @@
 .text {
     color: white;
     text-align: center;
-    font-size: 5rem;
+    font-size: 2rem;
     align-self: center;
     padding: 0;
     margin: auto;
-    line-height: 5rem;
+    line-height: 2rem;
 }
 
 .resizer {

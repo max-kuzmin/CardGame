@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, Inject } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { ZoneParams } from 'src/models/ZoneParams';
 import { InitPersonalZoneParams, MinResizeDelta, PersonalZoneParamsKey } from 'src/models/Constants';
 import { ResizedEvent } from 'angular-resize-event';
@@ -11,7 +11,8 @@ import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
 @Component({
   selector: 'app-personal-zone',
   templateUrl: './personal-zone.component.html',
-  styleUrls: ['./personal-zone.component.css']
+  styleUrls: ['./personal-zone.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PersonalZoneComponent implements OnInit {
   private isClicked = false;

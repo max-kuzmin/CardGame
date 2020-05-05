@@ -1,17 +1,16 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../../helpers/MouseEventsHelpers';
 import { Coords } from 'src/models/Coords';
 import { MouseButtons } from 'src/models/MouseButtons';
 import { GameFieldService } from 'src/services/GameFieldService';
 import { PlayerLabelDto } from 'src/models/PlayerLabelDto';
-import { sampleTime } from 'rxjs/operators';
-import { FrameDuration } from 'src/models/Constants';
 
 @Component({
   selector: 'app-player-label',
   templateUrl: './player-label.component.html',
-  styleUrls: ['./player-label.component.css']
+  styleUrls: ['./player-label.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PlayerLabelComponent {
   private isClicked = false;
@@ -31,7 +30,6 @@ export class PlayerLabelComponent {
   constructor(private gameFieldService: GameFieldService) {
     this.mouseUpEvent.subscribe(() => this.isClicked = false);
     this.mouseMoveEvent
-      .pipe(sampleTime(FrameDuration))
       .subscribe(event => this.onMouseMove(event));
   }
 

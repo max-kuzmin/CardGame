@@ -1,9 +1,8 @@
-import { Component, Input, Inject } from '@angular/core';
+import { Component, Input, Inject, ChangeDetectionStrategy } from '@angular/core';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { fromEvent } from 'rxjs';
-import { sampleTime } from 'rxjs/operators';
 import { GameFieldService } from 'src/services/GameFieldService';
-import { NumberOfCards, FrameDuration, CardWidth, CardHeight, UserNameKey } from 'src/models/Constants';
+import { NumberOfCards, CardWidth, CardHeight, UserNameKey } from 'src/models/Constants';
 import { CardCoordinatesDto } from '../../models/CardCoordinatesDto';
 import { ZoneParams } from 'src/models/ZoneParams';
 import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords, isCardInside } from '../../helpers/MouseEventsHelpers';
@@ -14,7 +13,8 @@ import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
 @Component({
   selector: 'app-game-card',
   templateUrl: './game-card.component.html',
-  styleUrls: ['./game-card.component.css']
+  styleUrls: ['./game-card.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameCardComponent {
   private isClicked = false;
@@ -46,6 +46,18 @@ export class GameCardComponent {
 
   get isNotMyCard(): boolean {
     return !!this.model.owner && this.model.owner !== this.userName;
+  }
+
+  get backgroundSize(): string {
+    return `${this.cardSize.width}px ${this.cardSize.height}px`;
+  }
+
+  get backgroundImage(): string {
+    if (this.model.isOpened) {
+      return 'url(' + require(`../../images/${this.model.id + 1}.jpg`) + ')';
+    } else {
+      return 'url(' + require('../../images/back.jpg') + ')';
+    }
   }
 
   onCardMouseDown(event: MouseEvent) {
@@ -80,7 +92,6 @@ export class GameCardComponent {
     this.mouseUpEvent.subscribe(() => this.onCardMouseUp());
 
     this.mouseMoveEvent
-      .pipe(sampleTime(FrameDuration))
       .subscribe(event => this.onCardMove(event));
   }
 

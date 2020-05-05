@@ -1,5 +1,5 @@
 export class PlayerInfo {
     public readonly name: string;
 
-    public cardsCount: number;
+    public readonly cardsCount: number;
 }

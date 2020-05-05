@@ -18,11 +18,11 @@ export class InfoZoneComponent {
     const ownedCards = value.cards.filter(e => e.owner);
 
     for (const card of ownedCards) {
-      const existPlayer = result.find(e => e.name === card.owner);
-      if (!existPlayer) {
+      const existPlayerIndex = result.findIndex(e => e.name === card.owner);
+      if (existPlayerIndex === -1) {
         result.push({ name: card.owner, cardsCount: 1 });
       } else {
-        existPlayer.cardsCount++;
+        result[existPlayerIndex] = { name: card.owner, cardsCount: result[existPlayerIndex].cardsCount + 1 };
       }
     }
 

@@ -2,7 +2,7 @@ import { GameCardDto } from './GameCardDto';
 import { PlayerLabelDto } from './PlayerLabelDto';
 
 export class GameFieldStateDto {
-    public cards: GameCardDto[];
+    public readonly cards: GameCardDto[];
 
-    public playerLabels: PlayerLabelDto[];
+    public readonly playerLabels: PlayerLabelDto[];
 }
