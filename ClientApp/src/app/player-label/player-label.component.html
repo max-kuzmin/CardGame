@@ -1,0 +1,10 @@
+<div 
+  class="player-label"
+  [style.top.px]="model.y"
+  [style.left.px]="model.x">
+  <div
+    (mousedown)="onMouseDown($event)"
+    class="text">
+    {{ model.name }}
+  </div>
+</div>

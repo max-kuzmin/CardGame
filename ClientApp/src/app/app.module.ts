@@ -11,6 +11,7 @@ import { AngularResizedEventModule } from 'angular-resize-event';
 import { ThrowZoneComponent } from './throw-zone/throw-zone.component';
 import { UserNameFormComponent } from './username-form/username-form.component';
 import { InfoZoneComponent } from './info-zone/info-zone.component';
+import { PlayerLabelComponent } from './player-label/player-label.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { InfoZoneComponent } from './info-zone/info-zone.component';
     PersonalZoneComponent,
     ThrowZoneComponent,
     UserNameFormComponent,
-    InfoZoneComponent
+    InfoZoneComponent,
+    PlayerLabelComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

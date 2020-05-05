@@ -7,7 +7,7 @@ namespace CardGame.Services
     {
         GameFieldState GetState();
 
-        void MixCards(bool thrownOnly, int? initX = null, int? initY = null);
+        void MixCards(bool thrownOnly);
 
         void PopCard(int id);
 
@@ -20,5 +20,9 @@ namespace CardGame.Services
         void SetCardIsOpened(CardParamDto<bool> model);
 
         void SetCardIsThrown(CardParamDto<bool> model);
+
+        void AddPlayerLabel(string name);
+
+        void SetPlayerLabelCoordinates(PlayerLabelCoordinatesDto coords);
     }
 }

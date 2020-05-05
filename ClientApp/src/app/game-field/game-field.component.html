@@ -5,6 +5,10 @@
     [throwZoneParams]="throwZoneParams"></app-game-card>
 </ng-template>
 
+<ng-template ngFor let-item [ngForOf]="playerLabels" let-i="index" [ngForTrackBy]="trackPlayerLabelByName">
+  <app-player-label [model]="item"></app-player-label>
+</ng-template>
+
 <app-personal-zone (paramsChanged)="updatePersonalZoneParams($event)"></app-personal-zone>
 
 <app-throw-zone (paramsChanged)="updateThrowZoneParams($event)"></app-throw-zone>

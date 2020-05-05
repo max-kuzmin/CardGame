@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, Subscription, } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CardCoordinatesDto } from 'src/models/CardCoordinatesDto';
+import { PlayerLabelCoordinatesDto } from 'src/models/PlayerLabelCoordinatesDto';
 
 const controller = 'gameField';
 const hub = 'gameFieldHub';
@@ -16,6 +17,8 @@ const setCardCoordinatesMethod = '/setCardCoordinates';
 const setCardOwnerMethod = '/setCardOwner';
 const setCardIsOpenedMethod = '/setCardIsOpened';
 const setCardIsThrownMethod = '/setCardIsThrown';
+const addPlayerLabelMethod = '/addPlayerLabel';
+const setPlayerLabelCoordinatesMethod = '/setPlayerLabelCoordinates';
 
 @Injectable({
     providedIn: 'root'
@@ -84,6 +87,18 @@ export class GameFieldService {
         return this.http
             .post(this.baseUrl + controller + setCardIsThrownMethod, { id: id, value: value })
             .subscribe(() => console.log('Set card setCard isThrown id ' + id));
+    }
+
+    public addPlayerLabel(name: string): Subscription {
+        return this.http
+            .post(this.baseUrl + controller + addPlayerLabelMethod, { name: name })
+            .subscribe(() => console.log('Add label for player ' + name));
+    }
+
+    public setPlayerLabelCoordinates(coords: PlayerLabelCoordinatesDto): Subscription {
+        return this.http
+            .post(this.baseUrl + controller + setPlayerLabelCoordinatesMethod, coords)
+            .subscribe(() => console.log('Set player label coords, name ' + coords.name));
     }
 
     private addListener() {

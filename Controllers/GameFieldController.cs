@@ -24,9 +24,9 @@ namespace CardGame.Controllers
         }
 
         [HttpGet(nameof(MixCards))]
-        public IActionResult MixCards(bool thrownOnly, int? initX, int? initY)
+        public IActionResult MixCards(bool thrownOnly)
         {
-            _gameFieldService.MixCards(thrownOnly, initX, initY);
+            _gameFieldService.MixCards(thrownOnly);
             return Ok();
         }
 
@@ -69,6 +69,20 @@ namespace CardGame.Controllers
         public IActionResult SetCardRotation([Required][FromBody]CardParamDto<int> model)
         {
             _gameFieldService.SetCardRotation(model);
+            return Ok();
+        }
+
+        [HttpPost(nameof(AddPlayerLabel))]
+        public IActionResult AddPlayerLabel([Required][FromBody]NewPlayerLabelDto model)
+        {
+            _gameFieldService.AddPlayerLabel(model.Name);
+            return Ok();
+        }
+
+        [HttpPost(nameof(SetPlayerLabelCoordinates))]
+        public IActionResult SetPlayerLabelCoordinates([Required][FromBody]PlayerLabelCoordinatesDto coords)
+        {
+            _gameFieldService.SetPlayerLabelCoordinates(coords);
             return Ok();
         }
     }

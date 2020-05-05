@@ -37,7 +37,7 @@ namespace CardGame.Services
             }
         }
 
-        public void MixCards(bool thrownOnly, int? initX = null, int? initY = null)
+        public void MixCards(bool thrownOnly)
         {
             lock (Constants.GameFieldStateKey)
             {
@@ -67,8 +67,8 @@ namespace CardGame.Services
                     card.IsThrown = false;
                     card.IsOpened = false;
                     card.Owner = null;
-                    card.X = initX ?? Constants.InitCardsX;
-                    card.Y = initY ?? Constants.InitCardsY;
+                    card.X = Constants.InitCardsX;
+                    card.Y = Constants.InitCardsY;
                     card.Rotation = 0;
                 }
 
@@ -129,6 +129,47 @@ namespace CardGame.Services
             UpdateCardProperties(model.Id, card => card.IsThrown = model.Value);
         }
 
+        public void AddPlayerLabel(string name)
+        {
+            lock (Constants.GameFieldStateKey)
+            {
+                var updated = GetState();
+
+                if (updated.PlayerLabels.Any(e => e.Name == name))
+                {
+                    return;
+                }
+
+                updated.PlayerLabels.Add(new PlayerLabel
+                {
+                    Name = name,
+                    X = Constants.InitPlayerLabelX,
+                    Y = Constants.InitPlayerLabelY
+                });
+
+                UpdateStateAndSend(updated);
+            }
+        }
+
+        public void SetPlayerLabelCoordinates(PlayerLabelCoordinatesDto coords)
+        {
+            lock (Constants.GameFieldStateKey)
+            {
+                var updated = GetState();
+
+                var label = updated.PlayerLabels.SingleOrDefault(e => e.Name == coords.Name);
+                if (label == null)
+                {
+                    return;
+                }
+
+                label.X = coords.X;
+                label.Y = coords.Y;
+
+                UpdateStateAndSend(updated);
+            }
+        }
+
         private void UpdateCardProperties(int id, Action<GameCard> action)
         {
             lock (Constants.GameFieldStateKey)
@@ -168,7 +209,8 @@ namespace CardGame.Services
 
             var state = new GameFieldState
             {
-                Cards = cards.ToArray()
+                Cards = cards.ToArray(),
+                PlayerLabels = new List<PlayerLabel>()
             };
 
             _memoryCache.Set(Constants.GameFieldStateKey, state);

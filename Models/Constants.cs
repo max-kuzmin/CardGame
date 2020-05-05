@@ -7,5 +7,7 @@
         public const string SendStateHubMethod = "ReceiveState";
         public const int InitCardsX = 180;
         public const int InitCardsY = 35;
+        public const int InitPlayerLabelX = 300;
+        public const int InitPlayerLabelY = 300;
     }
 }

@@ -1,0 +1,10 @@
+.player-label {
+    position: absolute;
+}
+
+.text {
+    display: inline;
+    color: lightgray;
+    font-size: 2rem;
+    cursor: move;
+}

@@ -3,6 +3,7 @@ import { GameFieldService } from 'src/services/GameFieldService';
 import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { ZoneParams } from 'src/models/ZoneParams';
+import { PlayerLabelDto } from 'src/models/PlayerLabelDto';
 
 @Component({
   selector: 'app-game-field',
@@ -19,6 +20,10 @@ export class GameFieldComponent {
     return this.state.cards;
   }
 
+  get playerLabels(): PlayerLabelDto[] {
+    return this.state.playerLabels;
+  }
+
   constructor(gameFieldService: GameFieldService) {
     gameFieldService.startConnection();
     gameFieldService.stateUpdated.subscribe(newState => this.state = newState);
@@ -27,6 +32,10 @@ export class GameFieldComponent {
 
   trackCardsById(index: number, item: GameCardDto): number | undefined {
     return item ? item.id : undefined;
+  }
+
+  trackPlayerLabelByName(index: number, item: PlayerLabelDto): string | undefined {
+    return item ? item.name : undefined;
   }
 
   updatePersonalZoneParams(event: ZoneParams): void {
