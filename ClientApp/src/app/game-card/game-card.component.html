@@ -1,5 +1,6 @@
 <div
-  class="game-card-container"
+  *ngIf="!isNotMyCard"
+  class="game-card"
   [style.top.px]="model.y"
   [style.left.px]="model.x"
   [class.rotated90]="isRotated90"
@@ -8,7 +9,17 @@
   [style.z-index]="model.order"
   [style.width.px]="cardSize.width"
   [style.height.px]="cardSize.height"
-  [class.hidden]="isNotMyCard"
   [style.background-size]="backgroundSize"
   [style.background-image]="backgroundImage"
-  (mousedown)="onCardMouseDown($event)"></div>
+  [style.background-position-x.px]="model.isOpened ? -10 : 0"
+  (mousedown)="onCardMouseDown($event)">
+    <div
+      *ngIf="model.isOpened"
+      class="game-card-zoom"
+      [style.top.px]="-1"
+      [style.left.px]="leftZoom"
+      [style.width.px]="widthZoom"
+      [style.height.px]="cardSize.height"
+      [style.background-size]="backgroundSizeZoom"
+      [style.background-image]="backgroundImage"></div>
+</div>

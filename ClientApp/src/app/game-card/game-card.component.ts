@@ -52,6 +52,18 @@ export class GameCardComponent {
     return `${this.cardSize.width}px ${this.cardSize.height}px`;
   }
 
+  get backgroundSizeZoom(): string {
+    return `${this.cardSize.width * 2}px ${this.cardSize.height * 2}px`;
+  }
+
+  get widthZoom(): number {
+    return this.cardSize.width / 4 * 1.4;
+  }
+
+  get leftZoom(): number {
+    return this.cardSize.width / 4 * 2.6 - 1;
+  }
+
   get backgroundImage(): string {
     if (this.model.isOpened) {
       return 'url(' + require(`../../images/${this.model.id + 1}.jpg`) + ')';

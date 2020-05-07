@@ -1,8 +1,18 @@
-.game-card-container {
+.game-card {
     position: absolute;
     border: 1px black solid;
     border-radius: 0.25rem;
     cursor: pointer;
+    background-repeat: no-repeat;
+}
+
+.game-card-zoom {
+    position: relative;
+    border: 1px black solid;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    background-position-x: right;
+    background-repeat: no-repeat;
 }
 
 .rotated90 {
