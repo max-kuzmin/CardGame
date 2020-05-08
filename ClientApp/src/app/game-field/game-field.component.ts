@@ -4,6 +4,7 @@ import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { ZoneParams } from 'src/models/ZoneParams';
 import { PlayerLabelDto } from 'src/models/PlayerLabelDto';
+import { PlayerInfo } from 'src/models/PlayerInfo';
 
 @Component({
   selector: 'app-game-field',
@@ -11,7 +12,8 @@ import { PlayerLabelDto } from 'src/models/PlayerLabelDto';
   styleUrls: ['./game-field.component.css']
 })
 export class GameFieldComponent {
-  state: GameFieldStateDto = <GameFieldStateDto>{ cards: [] };
+  state: GameFieldStateDto = <GameFieldStateDto>{ cards: [], playerLabels: [] };
+  playersInfo: PlayerInfo[] = [];
 
   personalZoneParams: ZoneParams;
   throwZoneParams: ZoneParams;
@@ -52,7 +54,7 @@ export class GameFieldComponent {
       if (oldCardIndex === -1) {
         this.state.cards.push(card);
       } else {
-        this.state.cards[oldCardIndex] = card;
+        this.state.cards.splice(oldCardIndex, 1, card);
       }
     }
 
@@ -61,8 +63,18 @@ export class GameFieldComponent {
       if (oldLabelIndex === -1) {
         this.state.playerLabels.push(label);
       } else {
-        this.state.playerLabels[oldLabelIndex] = label;
+        this.state.playerLabels.splice(oldLabelIndex, 1, label);
       }
     }
+
+    const newPlayersInfoMap = this.state.cards.reduce((total, value) => {
+      if (value.owner) {
+        total[value.owner] = (total[value.owner] || 0) + 1;
+      }
+      return total;
+    }, { });
+
+    this.playersInfo = Object.entries(newPlayersInfoMap)
+      .map(item => <PlayerInfo> { name: item[0], cardsCount: item[1] });
   }
 }

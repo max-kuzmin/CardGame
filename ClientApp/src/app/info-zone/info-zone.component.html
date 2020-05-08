@@ -3,7 +3,7 @@
   [style.left.px]="model.x"
   [style.top.px]="model.y">
   <div class="info-zone-item">Карты:</div>
-  <ng-template class="info-zone" ngFor let-item [ngForOf]="players" let-i="index" [ngForTrackBy]="trackPlayersByName">
+  <ng-template class="info-zone" ngFor let-item [ngForOf]="playersInfo" let-i="index" [ngForTrackBy]="trackPlayersByName">
     <div class="info-zone-item">{{ item.name }} - {{ item.cardsCount }}</div>
   </ng-template>
 </div>
