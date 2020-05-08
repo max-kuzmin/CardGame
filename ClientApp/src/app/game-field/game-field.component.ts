@@ -28,8 +28,12 @@ export class GameFieldComponent {
 
   constructor(gameFieldService: GameFieldService) {
     gameFieldService.startConnection();
-    gameFieldService.stateUpdated.subscribe(updatedState => this.updateState(updatedState));
-    gameFieldService.getState().subscribe(newState => this.state = newState);
+    gameFieldService.stateUpdated.subscribe(updatedState =>
+      this.updateState(updatedState));
+    gameFieldService.getState().subscribe(newState => {
+      this.state = newState;
+      this.updatePlayersInfo();
+    });
   }
 
   trackCardsById(index: number, item: GameCardDto): number | undefined {
@@ -67,14 +71,17 @@ export class GameFieldComponent {
       }
     }
 
+    this.updatePlayersInfo();
+  }
+
+  private updatePlayersInfo() {
     const newPlayersInfoMap = this.state.cards.reduce((total, value) => {
       if (value.owner) {
         total[value.owner] = (total[value.owner] || 0) + 1;
       }
       return total;
-    }, { });
-
+    }, {});
     this.playersInfo = Object.entries(newPlayersInfoMap)
-      .map(item => <PlayerInfo> { name: item[0], cardsCount: item[1] });
+        .map(item => <PlayerInfo>{ name: item[0], cardsCount: item[1] });
   }
 }
