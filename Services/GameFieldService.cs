@@ -41,14 +41,14 @@ namespace CardGame.Services
         {
             lock (Constants.GameFieldStateKey)
             {
-                var state = GetState();
-                var cardsToMix = state.Cards
+                var updated = GetState();
+                var cardsToMix = updated.Cards
                     .Where(e => !thrownOnly || e.IsThrown)
                     .ToList();
                 var mixCount = cardsToMix.Count;
 
                 // Pop other cards
-                var otherCards = state.Cards
+                var otherCards = updated.Cards
                     .Except(cardsToMix)
                     .OrderBy(e => e.Order)
                     .ToArray();
@@ -72,7 +72,8 @@ namespace CardGame.Services
                     card.Rotation = 0;
                 }
 
-                UpdateStateAndSend(state);
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[] { updated });
             }
         }
 
@@ -88,7 +89,7 @@ namespace CardGame.Services
                     return;
                 }
 
-                var cardsBefore = updated.Cards.Where(e => e.Order > topCard.Order);
+                var cardsBefore = updated.Cards.Where(e => e.Order > topCard.Order).ToArray();
                 foreach (var card in cardsBefore)
                 {
                     card.Order--;
@@ -96,7 +97,13 @@ namespace CardGame.Services
 
                 topCard.Order = Constants.NumberOfCards;
 
-                UpdateStateAndSend(updated);
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+
+                var stateToSend = new object[]
+                {
+                    new GameFieldState { Cards = cardsBefore.Append(topCard).ToArray() }
+                };
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
             }
         }
 
@@ -140,14 +147,21 @@ namespace CardGame.Services
                     return;
                 }
 
-                updated.PlayerLabels.Add(new PlayerLabel
+                var newLabel = new PlayerLabel
                 {
                     Name = name,
                     X = Constants.InitPlayerLabelX,
                     Y = Constants.InitPlayerLabelY
-                });
+                };
+                updated.PlayerLabels = updated.PlayerLabels.Append(newLabel).ToArray();
 
-                UpdateStateAndSend(updated);
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+
+                var stateToSend = new object[]
+                {
+                    new GameFieldState { PlayerLabels = new[] { newLabel } }
+                };
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
             }
         }
 
@@ -166,7 +180,13 @@ namespace CardGame.Services
                 label.X = coords.X;
                 label.Y = coords.Y;
 
-                UpdateStateAndSend(updated);
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+
+                var stateToSend = new object[]
+                {
+                    new GameFieldState { PlayerLabels = new[] { label } }
+                };
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
             }
         }
 
@@ -184,14 +204,14 @@ namespace CardGame.Services
 
                 action(card);
 
-                UpdateStateAndSend(updated);
-            }
-        }
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
 
-        private void UpdateStateAndSend(GameFieldState updated)
-        {
-            _memoryCache.Set(Constants.GameFieldStateKey, updated);
-            _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, new object[] { updated });
+                var stateToSend = new object[]
+                {
+                    new GameFieldState { Cards = new[] { card } }
+                };
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
+            }
         }
 
         private void CreateState()
@@ -210,7 +230,7 @@ namespace CardGame.Services
             var state = new GameFieldState
             {
                 Cards = cards.ToArray(),
-                PlayerLabels = new List<PlayerLabel>()
+                PlayerLabels = Array.Empty<PlayerLabel>()
             };
 
             _memoryCache.Set(Constants.GameFieldStateKey, state);

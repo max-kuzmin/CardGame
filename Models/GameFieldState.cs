@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace CardGame.Models
 {
     public sealed class GameFieldState
     {
-        public GameCard[] Cards { get; set; }
+        public GameCard[] Cards { get; set; } = Array.Empty<GameCard>();
 
-        public List<PlayerLabel> PlayerLabels { get; set; }
+        public PlayerLabel[] PlayerLabels { get; set; } = Array.Empty<PlayerLabel>();
     }
 }

@@ -26,7 +26,7 @@ export class GameFieldComponent {
 
   constructor(gameFieldService: GameFieldService) {
     gameFieldService.startConnection();
-    gameFieldService.stateUpdated.subscribe(newState => this.state = newState);
+    gameFieldService.stateUpdated.subscribe(updatedState => this.updateState(updatedState));
     gameFieldService.getState().subscribe(newState => this.state = newState);
   }
 
@@ -44,5 +44,25 @@ export class GameFieldComponent {
 
   updateThrowZoneParams(event: ZoneParams): void {
     this.throwZoneParams = event;
+  }
+
+  private updateState(updatedState: GameFieldStateDto): void {
+    for (const card of updatedState.cards) {
+      const oldCardIndex = this.state.cards.findIndex(e => e.id === card.id);
+      if (oldCardIndex === -1) {
+        this.state.cards.push(card);
+      } else {
+        this.state.cards[oldCardIndex] = card;
+      }
+    }
+
+    for (const label of updatedState.playerLabels) {
+      const oldLabelIndex = this.state.playerLabels.findIndex(e => e.name === label.name);
+      if (oldLabelIndex === -1) {
+        this.state.playerLabels.push(label);
+      } else {
+        this.state.playerLabels[oldLabelIndex] = label;
+      }
+    }
   }
 }

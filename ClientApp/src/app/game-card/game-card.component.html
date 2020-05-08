@@ -11,7 +11,7 @@
   [style.height.px]="cardSize.height"
   [style.background-size]="backgroundSize"
   [style.background-image]="backgroundImage"
-  [style.background-position-x.px]="model.isOpened ? -10 : 0"
+  [style.background-position-x.px]="backgroundPositionX"
   (mousedown)="onCardMouseDown($event)">
     <div
       *ngIf="model.isOpened"

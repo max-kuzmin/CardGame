@@ -31,7 +31,7 @@ export class GameFieldService {
         private http: HttpClient) {
     }
 
-    @Output() public stateUpdated: EventEmitter<GameFieldStateDto> = new EventEmitter();
+    @Output() public stateUpdated = new EventEmitter<GameFieldStateDto>();
 
     public startConnection(): void {
         this.hubConnection = new signalR.HubConnectionBuilder()

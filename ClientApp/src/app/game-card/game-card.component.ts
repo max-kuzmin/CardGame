@@ -52,6 +52,10 @@ export class GameCardComponent {
     return `${this.cardSize.width}px ${this.cardSize.height}px`;
   }
 
+  get backgroundPositionX(): number {
+    return this.model.isOpened ? -10 : 0;
+  }
+
   get backgroundSizeZoom(): string {
     return `${this.cardSize.width * 2}px ${this.cardSize.height * 2}px`;
   }
