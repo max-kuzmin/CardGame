@@ -20,11 +20,14 @@
     font-size: xx-large;
     width: 2rem;
     height: 2rem;
-    margin-left: 0.5rem;
     align-self: start;
-    padding: 0;
     line-height: 2rem;
     cursor: move;
+    background-image: url('../../images/cross.png');
+    background-size: 1rem 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: invert(100%);
 }
 
 .text {
@@ -42,9 +45,12 @@
     font-size: xx-large;
     width: 2rem;
     height: 2rem;
-    margin-bottom: 0.3rem;
     align-self: end;
     margin-left: auto;
-    padding: 0;
     line-height: 2rem;
+    background-image: url('../../images/diag.png');
+    background-size: 1rem 1rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: invert(100%);
 }
