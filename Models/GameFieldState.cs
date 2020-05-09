@@ -6,6 +6,6 @@ namespace CardGame.Models
     {
         public GameCard[] Cards { get; set; } = Array.Empty<GameCard>();
 
-        public PlayerLabel[] PlayerLabels { get; set; } = Array.Empty<PlayerLabel>();
+        public Player[] Players { get; set; } = Array.Empty<Player>();
     }
 }

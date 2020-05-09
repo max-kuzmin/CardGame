@@ -67,8 +67,8 @@ namespace CardGame.Services
                     card.IsThrown = false;
                     card.IsOpened = false;
                     card.Owner = null;
-                    card.X = Constants.InitCardsX;
-                    card.Y = Constants.InitCardsY;
+                    card.X = Constants.InitCardsCoords.X;
+                    card.Y = Constants.InitCardsCoords.Y;
                     card.Rotation = 0;
                 }
 
@@ -136,30 +136,39 @@ namespace CardGame.Services
             UpdateCardProperties(model.Id, card => card.IsThrown = model.Value);
         }
 
-        public void AddPlayerLabel(string name)
+        public void AddPlayer(string name)
         {
             lock (Constants.GameFieldStateKey)
             {
                 var updated = GetState();
 
-                if (updated.PlayerLabels.Any(e => e.Name == name))
+                var player = updated.Players.SingleOrDefault(e => e.Name == name);
+                if (player == null)
                 {
-                    return;
+                    player = new Player
+                    {
+                        Name = name,
+                        Label = new Coords
+                        {
+                            X = Constants.InitPlayerLabelCoords.X,
+                            Y = Constants.InitPlayerLabelCoords.Y
+                            },
+                        PersonalZone = new ZoneParams
+                        {
+                            Height = Constants.InitPersonalZoneParams.Height,
+                            Width = Constants.InitPersonalZoneParams.Width,
+                            Y = Constants.InitPersonalZoneParams.Y,
+                            X = Constants.InitPersonalZoneParams.X
+                        }
+                    };
+                    updated.Players = updated.Players.Append(player).ToArray();
+
+                    _memoryCache.Set(Constants.GameFieldStateKey, updated);
                 }
-
-                var newLabel = new PlayerLabel
-                {
-                    Name = name,
-                    X = Constants.InitPlayerLabelX,
-                    Y = Constants.InitPlayerLabelY
-                };
-                updated.PlayerLabels = updated.PlayerLabels.Append(newLabel).ToArray();
-
-                _memoryCache.Set(Constants.GameFieldStateKey, updated);
 
                 var stateToSend = new object[]
                 {
-                    new GameFieldState { PlayerLabels = new[] { newLabel } }
+                    new GameFieldState { Players = new[] { player } }
                 };
                 _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
             }
@@ -167,27 +176,22 @@ namespace CardGame.Services
 
         public void SetPlayerLabelCoordinates(PlayerLabelCoordinatesDto coords)
         {
-            lock (Constants.GameFieldStateKey)
+            UpdatePlayerProperties(coords.Name, player =>
             {
-                var updated = GetState();
+                player.Label.X = coords.X;
+                player.Label.Y = coords.Y;
+            });
+        }
 
-                var label = updated.PlayerLabels.SingleOrDefault(e => e.Name == coords.Name);
-                if (label == null)
-                {
-                    return;
-                }
-
-                label.X = coords.X;
-                label.Y = coords.Y;
-
-                _memoryCache.Set(Constants.GameFieldStateKey, updated);
-
-                var stateToSend = new object[]
-                {
-                    new GameFieldState { PlayerLabels = new[] { label } }
-                };
-                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
-            }
+        public void SetPersonalZoneParams(PersonalZoneParamsDto model)
+        {
+            UpdatePlayerProperties(model.Name, player =>
+            {
+                player.PersonalZone.X = model.X;
+                player.PersonalZone.Y = model.Y;
+                player.PersonalZone.Width = model.Width;
+                player.PersonalZone.Height = model.Height;
+            });
         }
 
         private void UpdateCardProperties(int id, Action<GameCard> action)
@@ -214,6 +218,30 @@ namespace CardGame.Services
             }
         }
 
+        private void UpdatePlayerProperties(string name, Action<Player> action)
+        {
+            lock (Constants.GameFieldStateKey)
+            {
+                var updated = GetState();
+                var player = updated.Players.SingleOrDefault(e => e.Name == name);
+
+                if (player == null)
+                {
+                    return;
+                }
+
+                action(player);
+
+                _memoryCache.Set(Constants.GameFieldStateKey, updated);
+
+                var stateToSend = new object[]
+                {
+                    new GameFieldState { Players = new[] { player } }
+                };
+                _hubContext.Clients.All.SendCoreAsync(Constants.SendStateHubMethod, stateToSend);
+            }
+        }
+
         private void CreateState()
         {
             var cards = new List<GameCard>();
@@ -230,7 +258,7 @@ namespace CardGame.Services
             var state = new GameFieldState
             {
                 Cards = cards.ToArray(),
-                PlayerLabels = Array.Empty<PlayerLabel>()
+                Players = Array.Empty<Player>()
             };
 
             _memoryCache.Set(Constants.GameFieldStateKey, state);

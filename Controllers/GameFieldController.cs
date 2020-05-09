@@ -72,10 +72,10 @@ namespace CardGame.Controllers
             return Ok();
         }
 
-        [HttpPost(nameof(AddPlayerLabel))]
-        public IActionResult AddPlayerLabel([Required][FromBody]NewPlayerLabelDto model)
+        [HttpPost(nameof(AddPlayer))]
+        public IActionResult AddPlayer([Required][FromBody]NewPlayerDto model)
         {
-            _gameFieldService.AddPlayerLabel(model.Name);
+            _gameFieldService.AddPlayer(model.Name);
             return Ok();
         }
 
@@ -83,6 +83,13 @@ namespace CardGame.Controllers
         public IActionResult SetPlayerLabelCoordinates([Required][FromBody]PlayerLabelCoordinatesDto coords)
         {
             _gameFieldService.SetPlayerLabelCoordinates(coords);
+            return Ok();
+        }
+
+        [HttpPost(nameof(SetPersonalZoneParams))]
+        public IActionResult SetPersonalZoneParams([Required][FromBody]PersonalZoneParamsDto model)
+        {
+            _gameFieldService.SetPersonalZoneParams(model);
             return Ok();
         }
     }

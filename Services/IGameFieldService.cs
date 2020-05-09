@@ -21,8 +21,10 @@ namespace CardGame.Services
 
         void SetCardIsThrown(CardParamDto<bool> model);
 
-        void AddPlayerLabel(string name);
+        void AddPlayer(string name);
 
         void SetPlayerLabelCoordinates(PlayerLabelCoordinatesDto coords);
+
+        void SetPersonalZoneParams(PersonalZoneParamsDto model);
     }
 }
