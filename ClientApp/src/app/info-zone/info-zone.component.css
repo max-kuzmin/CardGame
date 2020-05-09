@@ -1,5 +1,6 @@
 .info-zone-container {
     position: absolute;
+    z-index: 1;
 }
 
 .info-zone-item {

@@ -1,13 +1,21 @@
-<div 
+<div *ngIf="isOwnPersonalZone"
   class="personal-zone"
-  [style.top.px]="model.y"
-  [style.left.px]="model.x"
-  [style.width.px]="model.width"
-  [style.height.px]="model.height"
+  [style.top.px]="model.personalZone.y"
+  [style.left.px]="model.personalZone.x"
+  [style.width.px]="model.personalZone.width"
+  [style.height.px]="model.personalZone.height"
   (resized)="onResize($event)">
   <div
     class="dragger"
     (mousedown)="onMouseDown($event)"></div>
   <div class="text">РУКА</div>
   <div class="resizer"></div>
+</div>
+
+<div *ngIf="!isOwnPersonalZone"
+  class="other-personal-zone"
+  [style.top.px]="model.personalZone.y"
+  [style.left.px]="model.personalZone.x"
+  [style.width.px]="model.personalZone.width"
+  [style.height.px]="model.personalZone.height">
 </div>

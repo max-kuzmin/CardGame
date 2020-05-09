@@ -9,10 +9,18 @@
     flex-direction: column;
     min-width: 250px;
     min-height: 125px;
+    z-index: 3;
 }
 
 .personal-zone::-webkit-resizer {
     background-color: transparent;
+}
+
+.other-personal-zone {
+    position: absolute;
+    border-radius: 1.5rem;
+    background-color: #f3f3f3;
+    overflow: hidden;
 }
 
 .dragger {

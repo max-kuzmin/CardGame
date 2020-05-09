@@ -4,7 +4,7 @@ import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../.
 import { Coords } from 'src/models/Coords';
 import { MouseButtons } from 'src/models/MouseButtons';
 import { GameFieldService } from 'src/services/GameFieldService';
-import { PlayerLabelDto } from 'src/models/PlayerLabelDto';
+import { PlayerDto } from 'src/models/PlayerDto';
 
 @Component({
   selector: 'app-player-label',
@@ -18,11 +18,11 @@ export class PlayerLabelComponent {
   private readonly mouseMoveEvent = fromEvent<MouseEvent>(document, 'mousemove');
   private readonly mouseUpEvent = fromEvent<MouseEvent>(document, 'mouseup');
 
-  @Input() model: PlayerLabelDto;
+  @Input() model: PlayerDto;
 
   onMouseDown(event: MouseEvent): void {
     if (event.button === MouseButtons.left) {
-      this.clickOffset = CalculateClickOffset(event, this.model);
+      this.clickOffset = CalculateClickOffset(event, this.model.label);
       this.isClicked = true;
     }
   }

@@ -3,17 +3,20 @@
     [model]="item"
     [personalZoneParams]="personalZoneParams"
     [throwZoneParams]="throwZoneParams"
-    [isZoomed]="isZoomed"></app-game-card>
+    [isZoomed]="isZoomed"
+    [userName]="userName"></app-game-card>
 </ng-template>
 
 <app-info-zone [playersInfo]="playersInfo"></app-info-zone>
 
 <app-throw-zone (paramsChanged)="updateThrowZoneParams($event)"></app-throw-zone>
 
-<app-personal-zone (paramsChanged)="updatePersonalZoneParams($event)"></app-personal-zone>
+<ng-template ngFor let-item [ngForOf]="players" let-i="index" [ngForTrackBy]="trackPlayerByName">
+  <app-personal-zone [model]="item" [userName]="userName"></app-personal-zone>
+</ng-template>
 
-<ng-template ngFor let-item [ngForOf]="playerLabels" let-i="index" [ngForTrackBy]="trackPlayerLabelByName">
+<ng-template ngFor let-item [ngForOf]="players" let-i="index" [ngForTrackBy]="trackPlayerByName">
   <app-player-label [model]="item"></app-player-label>
 </ng-template>
 
-<app-username-form></app-username-form>
+<app-username-form (userNameSet)="onUserNameSet($event)"></app-username-form>

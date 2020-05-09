@@ -2,7 +2,6 @@ import { Component, Input } from '@angular/core';
 import { PlayerInfo } from 'src/models/PlayerInfo';
 import { Coords } from 'src/models/Coords';
 import { InfoZoneParams } from 'src/models/Constants';
-import { GameCardDto } from '../../models/GameCardDto';
 
 @Component({
   selector: 'app-info-zone',

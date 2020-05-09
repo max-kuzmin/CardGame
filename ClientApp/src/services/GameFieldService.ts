@@ -6,6 +6,7 @@ import { Observable, Subscription, } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { CardCoordinatesDto } from 'src/models/CardCoordinatesDto';
 import { PlayerLabelCoordinatesDto } from 'src/models/PlayerLabelCoordinatesDto';
+import { PersonalZoneParamsDto } from 'src/models/PersonalZoneParamsDto';
 
 const controller = 'gameField';
 const hub = 'gameFieldHub';
@@ -17,8 +18,9 @@ const setCardCoordinatesMethod = '/setCardCoordinates';
 const setCardOwnerMethod = '/setCardOwner';
 const setCardIsOpenedMethod = '/setCardIsOpened';
 const setCardIsThrownMethod = '/setCardIsThrown';
-const addPlayerLabelMethod = '/addPlayerLabel';
+const addPlayerMethod = '/addPlayer';
 const setPlayerLabelCoordinatesMethod = '/setPlayerLabelCoordinates';
+const setPersonalZoneParamsMethod = '/setPersonalZoneParams';
 
 @Injectable({
     providedIn: 'root'
@@ -89,16 +91,22 @@ export class GameFieldService {
             .subscribe(() => console.log('Set card setCard isThrown id ' + id));
     }
 
-    public addPlayerLabel(name: string): Subscription {
+    public addPlayer(name: string): Subscription {
         return this.http
-            .post(this.baseUrl + controller + addPlayerLabelMethod, { name: name })
-            .subscribe(() => console.log('Add label for player ' + name));
+            .post(this.baseUrl + controller + addPlayerMethod, { name: name })
+            .subscribe(() => console.log('Add player - ' + name));
     }
 
     public setPlayerLabelCoordinates(coords: PlayerLabelCoordinatesDto): Subscription {
         return this.http
             .post(this.baseUrl + controller + setPlayerLabelCoordinatesMethod, coords)
-            .subscribe(() => console.log('Set player label coords, name ' + coords.name));
+            .subscribe(() => console.log('Set player label coords for ' + coords.name));
+    }
+
+    public setPersonalZoneParams(model: PersonalZoneParamsDto): Subscription {
+        return this.http
+            .post(this.baseUrl + controller + setPersonalZoneParamsMethod, model)
+            .subscribe(() => console.log('Set personal zone params for ' + model.name));
     }
 
     private addListener() {

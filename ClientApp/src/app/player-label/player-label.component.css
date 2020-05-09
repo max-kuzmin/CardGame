@@ -1,5 +1,6 @@
 .player-label {
     position: absolute;
+    z-index: 2;
 }
 
 .text {

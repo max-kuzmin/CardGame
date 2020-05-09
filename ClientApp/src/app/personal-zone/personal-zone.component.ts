@@ -1,12 +1,13 @@
-import { Component, Output, EventEmitter, OnInit, Inject, ChangeDetectionStrategy } from '@angular/core';
-import { ZoneParams } from 'src/models/ZoneParams';
-import { InitPersonalZoneParams, MinResizeDelta, PersonalZoneParamsKey } from 'src/models/Constants';
+import { ChangeDetectionStrategy, Input, Component } from '@angular/core';
+import { MinResizeDelta } from 'src/models/Constants';
 import { ResizedEvent } from 'angular-resize-event';
 import { fromEvent } from 'rxjs';
 import { IsOutOfWindowBounds, CalculateClickOffset, CalculateCoords } from '../../helpers/MouseEventsHelpers';
 import { Coords } from 'src/models/Coords';
 import { MouseButtons } from 'src/models/MouseButtons';
-import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
+import { GameFieldService } from 'src/services/GameFieldService';
+import { PlayerDto } from 'src/models/PlayerDto';
+import { PersonalZoneParamsDto } from 'src/models/PersonalZoneParamsDto';
 
 @Component({
   selector: 'app-personal-zone',
@@ -14,53 +15,56 @@ import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
   styleUrls: ['./personal-zone.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PersonalZoneComponent implements OnInit {
+export class PersonalZoneComponent {
   private isClicked = false;
   private clickOffset = new Coords();
   private readonly mouseMoveEvent = fromEvent<MouseEvent>(document, 'mousemove');
   private readonly mouseUpEvent = fromEvent<MouseEvent>(document, 'mouseup');
 
-  model: ZoneParams;
-  @Output() paramsChanged = new EventEmitter<ZoneParams>();
+  @Input() userName: string | undefined;
+  @Input() model: PlayerDto;
 
-  ngOnInit(): void {
-    this.paramsChanged.emit(this.model);
+  get isOwnPersonalZone(): boolean {
+    return this.model.name === this.userName;
   }
 
   onResize(event: ResizedEvent): void {
-    if (Math.abs(event.newHeight - event.oldHeight) >= MinResizeDelta
-      || Math.abs(event.newWidth - event.oldWidth) >= MinResizeDelta) {
-      this.model = { ...this.model, width: event.newWidth, height: event.newHeight };
-      this.storage.set(PersonalZoneParamsKey, this.model);
-      this.paramsChanged.emit(this.model);
+    if (this.isOwnPersonalZone &&
+      (Math.abs(event.newHeight - event.oldHeight) >= MinResizeDelta
+      || Math.abs(event.newWidth - event.oldWidth) >= MinResizeDelta)) {
+      const params = <PersonalZoneParamsDto> {
+        ...this.model.personalZone,
+        name: this.model.name,
+        width: event.newWidth,
+        height: event.newHeight
+      };
+      this.gameFieldService.setPersonalZoneParams(params);
     }
   }
 
   onMouseDown(event: MouseEvent): void {
-    if (event.button === MouseButtons.left) {
-      this.clickOffset = CalculateClickOffset(event, this.model);
+    if (this.isOwnPersonalZone && event.button === MouseButtons.left) {
+      this.clickOffset = CalculateClickOffset(event, this.model.personalZone);
       this.isClicked = true;
     }
   }
 
-  constructor(@Inject(SESSION_STORAGE) private storage: StorageService) {
-    if (storage.has(PersonalZoneParamsKey)) {
-      this.model = storage.get(PersonalZoneParamsKey);
-    } else {
-      this.model = InitPersonalZoneParams;
-    }
-
+  constructor(
+    private gameFieldService: GameFieldService) {
     this.mouseUpEvent.subscribe(() => this.isClicked = false);
     this.mouseMoveEvent.subscribe(event => this.onMouseMove(event));
   }
 
   private onMouseMove(event: MouseEvent) {
-    if (!this.isClicked || IsOutOfWindowBounds(event)) {
+    if (!this.isOwnPersonalZone || !this.isClicked || IsOutOfWindowBounds(event)) {
       return;
     }
 
-    this.model = { ...this.model, ...CalculateCoords(event, this.clickOffset) };
-    this.storage.set(PersonalZoneParamsKey, this.model);
-    this.paramsChanged.emit(this.model);
+    const params = <PersonalZoneParamsDto> {
+      ...this.model.personalZone,
+      name: this.model.name,
+      ...CalculateCoords(event, this.clickOffset)
+    };
+    this.gameFieldService.setPersonalZoneParams(params);
   }
 }
