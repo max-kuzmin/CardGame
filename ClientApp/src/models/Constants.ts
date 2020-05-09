@@ -11,3 +11,4 @@ export const ThrowZoneParams: ZoneParams = { x: 10, y: 10, width: 150, height: 1
 export const InfoZoneParams: Coords = { x: 10, y: 150 };
 export const UserNameKey = 'userName';
 export const PersonalZoneParamsKey = 'personalZone';
+export const IsZoomedKey = 'isZoomed';

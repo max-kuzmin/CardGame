@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { GameFieldService } from 'src/services/GameFieldService';
 import { GameFieldStateDto } from 'src/models/GameFieldStateDto';
 import { GameCardDto } from 'src/models/GameCardDto';
 import { ZoneParams } from 'src/models/ZoneParams';
 import { PlayerLabelDto } from 'src/models/PlayerLabelDto';
 import { PlayerInfo } from 'src/models/PlayerInfo';
+import { SESSION_STORAGE, StorageService } from 'ngx-webstorage-service';
+import { IsZoomedKey } from 'src/models/Constants';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-game-field',
@@ -12,8 +15,11 @@ import { PlayerInfo } from 'src/models/PlayerInfo';
   styleUrls: ['./game-field.component.css']
 })
 export class GameFieldComponent {
+  private readonly keyDownEvent = fromEvent<KeyboardEvent>(document, 'keydown');
+
   state: GameFieldStateDto = <GameFieldStateDto>{ cards: [], playerLabels: [] };
   playersInfo: PlayerInfo[] = [];
+  isZoomed = false;
 
   personalZoneParams: ZoneParams;
   throwZoneParams: ZoneParams;
@@ -26,7 +32,9 @@ export class GameFieldComponent {
     return this.state.playerLabels;
   }
 
-  constructor(gameFieldService: GameFieldService) {
+  constructor(
+    gameFieldService: GameFieldService,
+    @Inject(SESSION_STORAGE) private storage: StorageService) {
     gameFieldService.startConnection();
     gameFieldService.stateUpdated.subscribe(updatedState =>
       this.updateState(updatedState));
@@ -34,6 +42,9 @@ export class GameFieldComponent {
       this.state = newState;
       this.updatePlayersInfo();
     });
+
+    this.keyDownEvent.subscribe(event => this.onKeyDown(event));
+    this.isZoomed = storage.has(IsZoomedKey) ? storage.get(IsZoomedKey) : false;
   }
 
   trackCardsById(index: number, item: GameCardDto): number | undefined {
@@ -50,6 +61,13 @@ export class GameFieldComponent {
 
   updateThrowZoneParams(event: ZoneParams): void {
     this.throwZoneParams = event;
+  }
+
+  private onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'z' || event.key === 'я') {
+      this.isZoomed = !this.isZoomed;
+      this.storage.set(IsZoomedKey, this.isZoomed);
+    }
   }
 
   private updateState(updatedState: GameFieldStateDto): void {

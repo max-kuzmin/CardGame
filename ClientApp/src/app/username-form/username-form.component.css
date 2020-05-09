@@ -39,3 +39,14 @@
     margin-bottom: 5rem;
     color: white;
 }
+
+.help {
+    font-size: 1rem;
+    text-align: center;
+    margin-top: 5rem;
+    color: white;
+}
+
+.help p {
+    margin: 0;
+}

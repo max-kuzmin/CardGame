@@ -14,7 +14,7 @@
   [style.background-position-x.px]="backgroundPositionX"
   (mousedown)="onCardMouseDown($event)">
     <div
-      *ngIf="model.isOpened"
+      *ngIf="showZoomedCard"
       class="game-card-zoom"
       [style.top.px]="-1"
       [style.left.px]="leftZoom"

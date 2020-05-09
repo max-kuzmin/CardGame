@@ -31,6 +31,7 @@ export class GameCardComponent {
   @Input() readonly model: GameCardDto;
   @Input() readonly personalZoneParams: ZoneParams;
   @Input() readonly throwZoneParams: ZoneParams;
+  @Input() readonly isZoomed: boolean;
 
   get isRotated90(): boolean {
     return this.model.rotation === 90;
@@ -48,12 +49,16 @@ export class GameCardComponent {
     return !!this.model.owner && this.model.owner !== this.userName;
   }
 
+  get showZoomedCard(): boolean {
+    return this.isZoomed && this.model.isOpened;
+  }
+
   get backgroundSize(): string {
     return `${this.cardSize.width}px ${this.cardSize.height}px`;
   }
 
   get backgroundPositionX(): number {
-    return this.model.isOpened ? -10 : 0;
+    return this.isZoomed && this.model.isOpened ? -10 : 0;
   }
 
   get backgroundSizeZoom(): string {
